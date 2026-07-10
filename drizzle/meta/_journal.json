@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1773908778906,
+      "tag": "0000_fine_doomsday",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1774742400000,
+      "tag": "0001_historical_standings",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778464800000,
+      "tag": "0002_sprint_results",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1780444800000,
+      "tag": "0003_race_sessions",
+      "breakpoints": true
+    }
+  ]
+}

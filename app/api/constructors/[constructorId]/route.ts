@@ -1,0 +1,23 @@
+import { NextResponse } from "next/server";
+
+import { handleApiError } from "@/lib/server/api-response";
+import { getTeamProfileFoundation } from "@/lib/server/queries/profiles";
+
+type RouteProps = {
+  params: Promise<{ constructorId: string }>;
+};
+
+export async function GET(_: Request, { params }: RouteProps) {
+  try {
+    const { constructorId } = await params;
+    const profile = await getTeamProfileFoundation(constructorId);
+
+    if (!profile) {
+      return NextResponse.json({ ok: false, error: "Constructor not found." }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true, data: profile });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
