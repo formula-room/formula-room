@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { fetchInternalApi } from "@/lib/client/internal-api";
 import { DashCard, DashCardHead, PosBadge, TeamStripe } from "@/components/dashboard/page-primitives";
 import { HeroCard } from "@/components/home/hero-card";
+import { CountryFlag } from "@/components/shared/country-flag";
 
 type HomeInsightItem = {
   label: string;
@@ -135,7 +136,7 @@ function PodiumRow({ session, index }: { session: HomeSessionItem; index: number
   const position = Number.parseInt(podiumSession.position ?? String(index + 1), 10);
   const accentColor = podiumSession.accentColor ?? "#C8201A";
   return (
-    <div className="flex items-center gap-3 border-b border-[var(--color-line)] px-6 py-4 transition-colors last:border-b-0 hover:bg-[var(--color-bg)]">
+    <div className="flex min-w-0 items-center gap-3 border-b border-[var(--color-line)] px-5 py-4 transition-colors last:border-b-0 hover:bg-[var(--color-bg)] lg:border-r lg:border-b-0 lg:last:border-r-0">
       <PosBadge pos={position} />
       <TeamStripe teamColor={accentColor} />
       <div className="min-w-0 flex-1">
@@ -153,17 +154,18 @@ function PodiumRow({ session, index }: { session: HomeSessionItem; index: number
 function LastRaceCard({ race }: { race: HomeRaceCardData }) {
   return (
     <DashCard>
-      <div className="relative flex items-start justify-between gap-4 border-b border-[var(--color-line2)] px-6 py-5 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-[linear-gradient(90deg,var(--team-mercedes)_33%,var(--team-mclaren)_33%_66%,var(--team-ferrari)_66%)] after:opacity-60">
-        <div>
-          <span className="mb-3 inline-flex rounded-full border border-[var(--color-line2)] bg-[var(--color-bg)] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[1px] text-ink3">
-            Last Race - Round {race.round}
-          </span>
-          <h2 className="font-display text-[30px] leading-none tracking-[1px] text-ink">{race.title}</h2>
-          <p className="mt-1 text-[12px] text-ink3">{race.date} - {race.circuitName}</p>
+      <div className="grid lg:grid-cols-[360px_1fr]">
+        <div className="relative flex items-start gap-5 border-b border-[var(--color-line2)] px-6 py-5 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-[linear-gradient(90deg,var(--team-mercedes)_33%,var(--team-mclaren)_33%_66%,var(--team-ferrari)_66%)] after:opacity-60 lg:border-r lg:border-b-0 lg:after:inset-y-0 lg:after:right-0 lg:after:left-auto lg:after:h-auto lg:after:w-0.5">
+          <CountryFlag country={race.flagCountry} className="h-8 w-12 flex-shrink-0 rounded-[6px]" />
+          <div className="min-w-0">
+            <span className="mb-3 inline-flex rounded-full border border-[var(--color-line2)] bg-[var(--color-bg)] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[1px] text-ink3">
+              Last Race - Round {race.round}
+            </span>
+            <h2 className="font-display text-[30px] leading-none tracking-[1px] text-ink">{race.title}</h2>
+            <p className="mt-1 text-[12px] text-ink3">{race.date} - {race.circuitName}</p>
+          </div>
         </div>
-        <span className="text-[32px]">{race.flagCountry}</span>
-      </div>
-      <div>
+        <div className="grid lg:grid-cols-3">
         {race.sessions.length ? (
           race.sessions.slice(0, 3).map((session, index) => (
             <PodiumRow key={`${index}-${session.name}`} session={session} index={index} />
@@ -171,6 +173,7 @@ function LastRaceCard({ race }: { race: HomeRaceCardData }) {
         ) : (
           <div className="px-6 py-6 text-[13px] text-ink3">No verified finishing data is available for this race.</div>
         )}
+        </div>
       </div>
     </DashCard>
   );
@@ -255,7 +258,6 @@ export function HomePageView() {
         }
       } catch (loadError) {
         if (!cancelled) {
-          setData(emptyState);
           setError(loadError instanceof Error ? loadError.message : "Unable to load home data.");
         }
       }
@@ -270,22 +272,31 @@ export function HomePageView() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1140px] flex-col gap-6 px-0 pb-20 lg:px-0">
-      {error ? (
+      {error && data === emptyState ? (
+        <div className="rounded-[14px] border border-[var(--color-red-border)] bg-[var(--color-red-bg)] px-6 py-5 text-[13px] leading-relaxed text-[var(--color-red)]">
+          <p className="mb-1 font-medium">Home dashboard data could not be loaded.</p>
+          <p>{error}</p>
+        </div>
+      ) : error ? (
         <div className="rounded-[14px] border border-[var(--color-red-border)] bg-[var(--color-red-bg)] px-5 py-3 text-[13px] text-[var(--color-red)]">
           {error}
         </div>
       ) : null}
 
-      <HeroCard className="animate-fade-up animate-fade-up-1" {...data.nextRace} />
+      {error && data === emptyState ? null : (
+        <>
+          <HeroCard className="animate-fade-up animate-fade-up-1" {...data.nextRace} />
 
-      <div className="grid gap-6 lg:grid-cols-2 animate-fade-up animate-fade-up-3">
-        <LastRaceCard race={data.lastRace} />
-        <DriverStandingsCard entries={data.driverStandingsTopThree} />
-      </div>
+          <div className="animate-fade-up animate-fade-up-3">
+            <LastRaceCard race={data.lastRace} />
+          </div>
 
-      <div className="animate-fade-up animate-fade-up-4">
-        <TeamStandingsCard entries={data.teamStandingsTopThree} />
-      </div>
+          <div className="grid gap-6 lg:grid-cols-2 animate-fade-up animate-fade-up-4">
+            <DriverStandingsCard entries={data.driverStandingsTopThree} />
+            <TeamStandingsCard entries={data.teamStandingsTopThree} />
+          </div>
+        </>
+      )}
     </div>
   );
 }

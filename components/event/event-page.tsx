@@ -155,10 +155,72 @@ function getFactValue(items: CircuitFact[], label: string) {
   return items.find((item) => item.label === label)?.value ?? "--";
 }
 
-function groupSessionsByDate(sessions: EventSession[]) {
+function getSessionUtcDate(session: EventSession) {
+  const timeMatch = session.localTime.match(/^(\d{1,2}):(\d{2})/);
+  const dateValue = session.yourTime;
+
+  if (!timeMatch || !/^\d{2}\s[A-Za-z]{3}\s\d{4}$/.test(dateValue)) {
+    return null;
+  }
+
+  const [, hours, minutes] = timeMatch;
+  const parsed = Date.parse(`${dateValue} ${hours}:${minutes}:00 UTC`);
+  return Number.isNaN(parsed) ? null : new Date(parsed);
+}
+
+function formatSessionDisplayTime(session: EventSession, timezone: TimezoneMode) {
+  if (timezone === "UTC") {
+    return session.localTime;
+  }
+
+  const date = getSessionUtcDate(session);
+  if (!date) {
+    return session.localTime;
+  }
+
+  return new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+}
+
+function formatSessionDisplayDate(session: EventSession, timezone: TimezoneMode) {
+  if (timezone === "UTC") {
+    return session.yourTime;
+  }
+
+  const date = getSessionUtcDate(session);
+  if (!date) {
+    return session.yourTime;
+  }
+
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+function formatSessionDisplayDay(session: EventSession, timezone: TimezoneMode) {
+  if (timezone === "UTC") {
+    return session.day;
+  }
+
+  const date = getSessionUtcDate(session);
+  if (!date) {
+    return session.day;
+  }
+
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "short",
+  }).format(date);
+}
+
+function groupSessionsByDate(sessions: EventSession[], timezone: TimezoneMode) {
   const groups = new Map<string, EventSession[]>();
   for (const session of sessions) {
-    const key = `${session.day}|${session.yourTime}`;
+    const key = `${formatSessionDisplayDay(session, timezone)}|${formatSessionDisplayDate(session, timezone)}`;
     groups.set(key, [...(groups.get(key) ?? []), session]);
   }
   return Array.from(groups.entries()).map(([key, rows]) => {
@@ -252,7 +314,7 @@ function WeekendHero({ weekend }: { weekend: EventWeekend }) {
 function SchedulePanel({ weekend }: { weekend: EventWeekend }) {
   const [timezone, setTimezone] = useState<TimezoneMode>("UTC");
   const sessionStates = useMemo(() => getSessionStateMap(weekend), [weekend]);
-  const groups = useMemo(() => groupSessionsByDate(weekend.schedule), [weekend.schedule]);
+  const groups = useMemo(() => groupSessionsByDate(weekend.schedule, timezone), [weekend.schedule, timezone]);
   const format = getWeekendFormat(weekend.schedule);
 
   if (weekend.schedule.length === 0) {
@@ -315,7 +377,8 @@ function SchedulePanel({ weekend }: { weekend: EventWeekend }) {
               const state = sessionStates.get(session.key) ?? "upcoming";
               const sessionNumber = weekend.schedule.findIndex((item) => item.key === session.key) + 1 || index + 1;
               const accent = `var(--session-${sessionType})`;
-              const displayedTime = session.localTime;
+              const displayedTime = formatSessionDisplayTime(session, timezone);
+              const displayedDate = formatSessionDisplayDate(session, timezone);
 
               return (
                 <div
@@ -365,7 +428,7 @@ function SchedulePanel({ weekend }: { weekend: EventWeekend }) {
                     </div>
                     <div className="text-right">
                       <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[1px] text-ink3">Date</p>
-                      <p className="text-[13px] font-medium text-ink2">{session.yourTime}</p>
+                      <p className="text-[13px] font-medium text-ink2">{displayedDate}</p>
                     </div>
                   </div>
                 </div>
