@@ -383,3 +383,33 @@
 .event-live-pulse {
   animation: event-live-pulse 1.2s ease-in-out infinite;
 }
+
+@keyframes slideInR {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInL {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-r {
+  animation: slideInR 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-slide-in-l {
+  animation: slideInL 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}

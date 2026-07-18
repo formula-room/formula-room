@@ -8,6 +8,8 @@ import { fetchInternalApi } from "@/lib/client/internal-api";
 import { DashCard, DashCardHead, PosBadge, TeamStripe } from "@/components/dashboard/page-primitives";
 import { HeroCard } from "@/components/home/hero-card";
 import { CountryFlag } from "@/components/shared/country-flag";
+import { NewsSlider } from "@/components/news/NewsSlider";
+import type { NewsArticleView } from "@/components/news/NewsSlide";
 
 type HomeInsightItem = {
   label: string;
@@ -62,6 +64,7 @@ type HomePageData = {
   lastRace: HomeRaceCardData;
   driverStandingsTopThree: HomeStandingsEntry[];
   teamStandingsTopThree: HomeStandingsEntry[];
+  news: NewsArticleView[];
 };
 
 function buildUnavailableRaceCard(title: string, subtitle: string): HomeRaceCardData {
@@ -108,6 +111,7 @@ const emptyState: HomePageData = {
   lastRace: buildUnavailableRaceCard("Last Race", "No completed race is available in the stored dataset."),
   driverStandingsTopThree: buildUnavailableStandings("Driver standings"),
   teamStandingsTopThree: buildUnavailableStandings("Team standings"),
+  news: [],
 };
 
 function initials(name: string) {
@@ -286,6 +290,12 @@ export function HomePageView() {
       {error && data === emptyState ? null : (
         <>
           <HeroCard className="animate-fade-up animate-fade-up-1" {...data.nextRace} />
+
+          {data.news.length > 0 ? (
+            <div className="animate-fade-up animate-fade-up-2">
+              <NewsSlider articles={data.news} />
+            </div>
+          ) : null}
 
           <div className="animate-fade-up animate-fade-up-3">
             <LastRaceCard race={data.lastRace} />

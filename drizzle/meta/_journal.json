@@ -29,6 +29,20 @@
       "when": 1780444800000,
       "tag": "0003_race_sessions",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784371938739,
+      "tag": "0004_dark_centennial",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1784400582126,
+      "tag": "0005_clear_captain_marvel",
+      "breakpoints": true
     }
   ]
 }

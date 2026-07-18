@@ -6,6 +6,7 @@ import {
   numeric,
   pgTable,
   primaryKey,
+  serial,
   text,
   time,
   timestamp,
@@ -206,3 +207,20 @@ export const constructorSeasonStandings = pgTable(
     pk: primaryKey({ columns: [table.seasonYear, table.constructorId] }),
   }),
 );
+
+export const newsArticles = pgTable("news_articles", {
+  id: serial("id").primaryKey(),
+  headline: text("headline").notNull(),
+  excerpt: text("excerpt"),
+  content: text("content"),
+  imageUrl: text("image_url"),
+  category: text("category"),
+  teamName: text("team_name"),
+  teamColor: text("team_color"),
+  isBreaking: boolean("is_breaking").notNull().default(false),
+  source: text("source"),
+  author: text("author"),
+  href: text("href"),
+  publishedAt: timestamp("published_at", { withTimezone: true }).defaultNow().notNull(),
+  isVisible: boolean("is_visible").notNull().default(true),
+});

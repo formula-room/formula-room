@@ -3,6 +3,7 @@ import "server-only";
 import { and, asc, desc, eq, gte, lt, lte } from "drizzle-orm";
 
 import { getDatabase } from "@/lib/db/client";
+import { getLatestNews } from "@/lib/db/news";
 import {
   circuits,
   constructors,
@@ -12,6 +13,7 @@ import {
   races,
   sprintResults,
 } from "@/lib/db/schema";
+import type { NewsArticleView } from "@/components/news/NewsSlide";
 import {
   getConstructorRouteSlug,
   getConstructorTheme,
@@ -494,10 +496,31 @@ async function getTopStandingsForSeason(seasonYear: number, throughRound?: numbe
   };
 }
 
+function mapNewsArticles(rows: Awaited<ReturnType<typeof getLatestNews>>): NewsArticleView[] {
+  return rows.map((row) => ({
+    id: row.id,
+    headline: row.headline,
+    excerpt: row.excerpt,
+    imageUrl: row.imageUrl,
+    category: row.category,
+    teamName: row.teamName,
+    teamColor: row.teamColor,
+    isBreaking: row.isBreaking,
+    source: row.source,
+    author: row.author,
+    href: row.href,
+    publishedAt: row.publishedAt.toISOString(),
+  }));
+}
+
 export async function getHomePageData() {
   const seasons = await getSeasonsList();
   const latestSeason = seasons[0]?.year ?? null;
-  const [nextRace, lastRace] = await Promise.all([getRaceByDateBoundary("next"), getRaceByDateBoundary("last")]);
+  const [nextRace, lastRace, news] = await Promise.all([
+    getRaceByDateBoundary("next"),
+    getRaceByDateBoundary("last"),
+    getLatestNews(5),
+  ]);
 
   const lastRacePodium = lastRace ? await getPodiumForRace(lastRace.raceId) : [];
   const [nextRaceOverview, lastRaceOverview, nextRaceSessions] = await Promise.all([
@@ -572,6 +595,7 @@ export async function getHomePageData() {
     seasonLabel: latestSeason ? `Season ${latestSeason}` : "Season data unavailable",
     nextRace: nextRaceCard,
     lastRace: lastRaceCard,
+    news: mapNewsArticles(news),
     driverStandingsTopThree: standings.topDrivers.length
       ? standings.topDrivers
       : [buildUnavailableStandingsEntry("01"), buildUnavailableStandingsEntry("02"), buildUnavailableStandingsEntry("03")],
