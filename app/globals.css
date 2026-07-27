@@ -413,3 +413,18 @@
 .animate-slide-in-l {
   animation: slideInL 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+/*
+ * Homepage-only dark-mode retint: swaps the app-wide navy card surface
+ * (--color-white etc.) for a neutral black/graphite scale so the homepage
+ * reads as one system with the CarRevealHero studio background. Scoped to
+ * .home-graphite-scope so no other route's dark mode is affected.
+ */
+.dark .home-graphite-scope {
+  --color-white: #16181d;
+  --color-bg2: #131519;
+  --color-bg3: #1b1e24;
+  --color-line: rgba(247, 247, 248, 0.07);
+  --color-line2: rgba(247, 247, 248, 0.11);
+  --color-line3: rgba(247, 247, 248, 0.2);
+}

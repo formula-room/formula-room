@@ -99,13 +99,15 @@ export function HeroCard({
   return (
     <section
       className={cn(
-        "relative grid overflow-hidden rounded-[16px] border border-[var(--color-line2)] bg-white lg:grid-cols-[1fr_420px]",
+        "relative grid overflow-hidden rounded-[14px] border border-[var(--color-line2)] bg-white lg:grid-cols-[1fr_420px]",
         "before:pointer-events-none before:absolute before:left-[35%] before:top-[60%] before:h-[500px] before:w-[500px] before:-translate-x-1/2 before:-translate-y-1/2 before:bg-[radial-gradient(ellipse,rgba(200,32,26,0.07)_0%,transparent_65%)]",
         "after:pointer-events-none after:absolute after:inset-0 after:bg-[repeating-linear-gradient(90deg,rgba(0,0,0,0.018)_0,rgba(0,0,0,0.018)_1px,transparent_1px,transparent_72px),repeating-linear-gradient(0deg,rgba(0,0,0,0.018)_0,rgba(0,0,0,0.018)_1px,transparent_1px,transparent_72px)]",
         className,
       )}
     >
-      <div className="relative z-10 flex min-h-[480px] flex-col justify-between border-b border-[var(--color-line2)] p-7 sm:p-10 lg:border-r lg:border-b-0 lg:p-12 lg:pb-10">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-[2px] bg-gradient-to-r from-transparent via-[var(--color-red)] to-transparent opacity-70" />
+
+      <div className="relative z-10 flex min-h-[460px] flex-col justify-between border-b border-[var(--color-line2)] p-6 sm:p-9 lg:border-r lg:border-b-0 lg:p-10 lg:pb-8">
         <div>
           <div className="mb-7 inline-flex w-fit items-center gap-2 rounded-full border border-[var(--color-red-border)] bg-[var(--color-red-bg)] px-3.5 py-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-red)] animate-pulse" />
@@ -144,7 +146,7 @@ export function HeroCard({
       </div>
 
       <aside className="relative z-10 flex flex-col bg-[var(--color-bg)]">
-        <div className="flex items-center justify-between gap-4 border-b border-[var(--color-line2)] px-7 pb-5 pt-6">
+        <div className="flex items-center justify-between gap-4 border-b border-[var(--color-line2)] px-6 pb-4 pt-5">
           <span className="text-[10px] font-semibold uppercase tracking-[1.3px] text-ink2">Weekend sessions</span>
           <div className="flex rounded-[6px] border border-[var(--color-line2)] bg-[var(--color-bg3)] p-0.5">
             <button
@@ -172,7 +174,7 @@ export function HeroCard({
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col gap-2 px-7 py-5">
+        <div className="flex flex-1 flex-col gap-2 px-6 py-4">
           {displayedSessions.length ? (
             displayedSessions.map((session) => {
               const status = session.status ?? "upcoming";
@@ -180,8 +182,8 @@ export function HeroCard({
                 <div
                   key={`${session.name}-${session.label}`}
                   className={cn(
-                    "flex cursor-pointer items-center justify-between rounded-[8px] border px-4 py-3.5 shadow-[0_1px_0_rgba(0,0,0,0.03)] transition-colors hover:bg-white",
-                    status === "completed" && "border-[var(--color-line2)] bg-[rgba(255,255,255,0.72)]",
+                    "flex cursor-pointer items-center justify-between rounded-[6px] border px-4 py-3.5 shadow-[0_1px_0_rgba(0,0,0,0.03)] transition-colors hover:bg-white",
+                    status === "completed" && "border-[var(--color-line2)] bg-[var(--color-bg2)]",
                     status === "live" && "border-[var(--color-red-border)] bg-[var(--color-red-bg)]",
                     status === "upcoming" && "border-[var(--color-line3)] bg-white",
                   )}
@@ -209,11 +211,11 @@ export function HeroCard({
           )}
         </div>
 
-        <div className="flex gap-2 border-t border-[var(--color-line2)] p-5">
-          <Link href={eventHref ?? "/event"} className="flex-1 rounded-[6px] bg-[var(--color-red)] py-3 text-center text-[12px] font-medium uppercase tracking-[0.5px] text-white">
+        <div className="flex gap-2 border-t border-[var(--color-line2)] p-4">
+          <Link href={eventHref ?? "/event"} className="flex-1 rounded-[6px] bg-[var(--color-red)] py-3 text-center text-[12px] font-medium uppercase tracking-[0.5px] text-white transition-colors hover:brightness-110">
             Full schedule
           </Link>
-          <Link href={circuitHref ?? "/grand-prix"} className="flex-1 rounded-[6px] border border-[var(--color-line2)] py-3 text-center text-[12px] font-medium uppercase tracking-[0.5px] text-ink3">
+          <Link href={circuitHref ?? "/grand-prix"} className="flex-1 rounded-[6px] border border-[var(--color-line2)] py-3 text-center text-[12px] font-medium uppercase tracking-[0.5px] text-ink3 transition-colors hover:border-[var(--color-red-border)] hover:text-[var(--color-red)]">
             Circuit info
           </Link>
         </div>

@@ -55,7 +55,7 @@ export function NewsSlide({ article }: { article: NewsArticleView }) {
         ) : null}
       </div>
 
-      <div className="flex flex-col justify-center gap-2 border-l border-[var(--color-line2)] px-6 py-5">
+      <div className="flex flex-col justify-center gap-2 border-l border-[var(--color-line2)] px-6 py-4">
         {article.teamName ? (
           <span
             className="text-[10px] font-bold uppercase tracking-[0.8px]"

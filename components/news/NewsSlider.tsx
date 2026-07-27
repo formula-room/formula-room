@@ -50,7 +50,9 @@ export function NewsSlider({ articles }: { articles: NewsArticleView[] }) {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="flex items-end justify-between gap-4 border-b border-[var(--color-line)] px-7 py-5">
+      <div className="h-[2px] bg-gradient-to-r from-transparent via-[var(--color-red)] to-transparent opacity-70" />
+
+      <div className="flex items-end justify-between gap-4 border-b border-[var(--color-line)] px-6 py-4">
         <div className="flex items-center gap-2.5">
           <h2 className="font-display text-[22px] leading-none tracking-[1px] text-ink">Latest News</h2>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-red-bg)] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.6px] text-[var(--color-red)]">
@@ -79,7 +81,7 @@ export function NewsSlider({ articles }: { articles: NewsArticleView[] }) {
           onClick={() => goTo(activeIndex - 1)}
           disabled={activeIndex === 0}
           aria-label="Previous story"
-          className="absolute left-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/35 text-white backdrop-blur-sm transition-opacity hover:bg-black/50 disabled:cursor-not-allowed disabled:opacity-30"
+          className="absolute left-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(248,250,252,0.2)] bg-[rgba(0,0,0,0.35)] text-[#F8FAFC] backdrop-blur-sm transition-colors hover:border-[var(--color-red)] hover:bg-[rgba(0,0,0,0.5)] disabled:cursor-not-allowed disabled:opacity-30"
         >
           <ChevronLeft className="size-4" />
         </button>
@@ -88,7 +90,7 @@ export function NewsSlider({ articles }: { articles: NewsArticleView[] }) {
           onClick={() => goTo(activeIndex + 1)}
           disabled={activeIndex === articles.length - 1}
           aria-label="Next story"
-          className="absolute right-[calc(42%_+_0.75rem)] top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/35 text-white backdrop-blur-sm transition-opacity hover:bg-black/50 disabled:cursor-not-allowed disabled:opacity-30"
+          className="absolute right-[calc(42%_+_0.75rem)] top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(248,250,252,0.2)] bg-[rgba(0,0,0,0.35)] text-[#F8FAFC] backdrop-blur-sm transition-colors hover:border-[var(--color-red)] hover:bg-[rgba(0,0,0,0.5)] disabled:cursor-not-allowed disabled:opacity-30"
         >
           <ChevronRight className="size-4" />
         </button>
