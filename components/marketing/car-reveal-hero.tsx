@@ -9,12 +9,10 @@ import { AeroFlowOverlay } from "./aero-flow-overlay";
 import styles from "./car-reveal-hero.module.css";
 
 const DEFAULT_BASE_SRC = "/images/f1-car-exterior.webp";
-const DEFAULT_AERO_SRC = "/images/f1-car-aero.webp";
 
 type CarRevealHeroProps = {
   className?: string;
   baseSrc?: string;
-  aeroSrc?: string;
   eyebrow?: string;
   heading?: React.ReactNode;
   description?: string;
@@ -35,7 +33,6 @@ function ImageMissingFallback({ path }: { path: string }) {
 export function CarRevealHero({
   className,
   baseSrc = DEFAULT_BASE_SRC,
-  aeroSrc = DEFAULT_AERO_SRC,
   eyebrow = "FR-01 · Concept",
   heading = (
     <>
@@ -50,9 +47,7 @@ export function CarRevealHero({
   const [hovering, setHovering] = useState(false);
   const [revealAll, setRevealAll] = useState(false);
   const [interacted, setInteracted] = useState(false);
-  const [baseMissing, setBaseMissing] = useState(false);
-  const [aeroMissing, setAeroMissing] = useState(false);
-  const revealDisabled = baseMissing || aeroMissing;
+  const [imageMissing, setImageMissing] = useState(false);
 
   const updateSpot = useCallback((clientX: number, clientY: number) => {
     const stage = stageRef.current;
@@ -91,7 +86,7 @@ export function CarRevealHero({
           <button
             type="button"
             onClick={() => setRevealAll((prev) => !prev)}
-            disabled={revealDisabled}
+            disabled={imageMissing}
             aria-pressed={revealAll}
             className="mt-9 inline-flex items-center gap-2 rounded-[6px] border border-[rgba(248,250,252,0.15)] px-4 py-2.5 text-[11px] font-medium uppercase tracking-[0.6px] text-[rgba(248,250,252,0.78)] transition-colors hover:border-[#C8201A] hover:text-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-[rgba(248,250,252,0.15)] disabled:hover:text-[rgba(248,250,252,0.78)]"
           >
@@ -103,39 +98,40 @@ export function CarRevealHero({
           ref={stageRef}
           data-hover={hovering}
           data-reveal-all={revealAll}
-          data-disabled={revealDisabled}
+          data-disabled={imageMissing}
           onPointerMove={handlePointerMove}
           onPointerEnter={() => setHovering(true)}
           onPointerLeave={() => setHovering(false)}
           className={cn("relative aspect-[16/9] w-full", styles.stage)}
         >
-          {baseMissing ? (
+          {imageMissing ? (
             <ImageMissingFallback path={baseSrc} />
           ) : (
-            <Image
-              src={baseSrc}
-              alt="Fictional FR-01 Formula 1 concept car, exterior view"
-              fill
-              sizes="(min-width: 1024px) 60vw, 100vw"
-              priority
-              className={styles.layer}
-              onError={() => setBaseMissing(true)}
-            />
-          )}
-          {aeroMissing ? null : (
-            <div className={styles.aeroLayer}>
+            <>
               <Image
-                src={aeroSrc}
-                alt="Fictional FR-01 Formula 1 concept car, aerodynamic airflow analysis view"
+                src={baseSrc}
+                alt="Fictional FR-01 Formula 1 concept car, exterior view"
                 fill
                 sizes="(min-width: 1024px) 60vw, 100vw"
+                priority
                 className={styles.layer}
-                onError={() => setAeroMissing(true)}
+                onError={() => setImageMissing(true)}
               />
-              <AeroFlowOverlay />
-            </div>
+              <div className={styles.aeroLayer}>
+                <Image
+                  src={baseSrc}
+                  alt=""
+                  aria-hidden="true"
+                  fill
+                  sizes="(min-width: 1024px) 60vw, 100vw"
+                  className={cn(styles.layer, styles.aeroFilter)}
+                />
+                <div className={styles.aeroTint} />
+                <AeroFlowOverlay />
+              </div>
+            </>
           )}
-          {!interacted && !revealAll && !revealDisabled ? (
+          {!interacted && !revealAll && !imageMissing ? (
             <span className={cn("pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-[rgba(248,250,252,0.15)] bg-[rgba(0,0,0,0.45)] px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.8px] text-[rgba(248,250,252,0.7)] backdrop-blur-sm", styles.hint)}>
               Hover to inspect
             </span>
