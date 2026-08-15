@@ -3,19 +3,19 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export const premiumSelectTriggerClass =
-  "h-12 rounded-full border border-slate-900/10 bg-white/88 px-5 text-slate-950 shadow-[0_10px_30px_rgba(15,23,42,0.06)] hover:bg-white dark:border-white/10 dark:bg-white/[0.04] dark:text-white dark:shadow-none dark:hover:bg-white/[0.06]";
+  "h-10 rounded-[8px] border border-[var(--color-line2)] bg-white px-4 text-ink shadow-none hover:border-[var(--color-line3)] hover:bg-white";
 
 export const premiumSelectContentClass =
-  "border border-slate-900/10 bg-[#fbfaf7] text-slate-950 shadow-[0_18px_44px_rgba(15,23,42,0.12)] dark:border-white/10 dark:bg-[#101722] dark:text-white dark:shadow-[0_18px_44px_rgba(0,0,0,0.28)]";
+  "border border-[var(--color-line2)] bg-white text-ink shadow-[0_12px_32px_rgba(23,20,15,0.10)]";
 
 export const premiumInputClass =
-  "h-12 w-full rounded-full border border-slate-900/10 bg-white/82 px-4 text-sm text-slate-950 outline-none transition-colors placeholder:text-slate-500 focus:border-[#ff6a3d]/30 focus:bg-white dark:border-white/10 dark:bg-white/[0.03] dark:text-white dark:placeholder:text-white/30 dark:focus:bg-white/[0.05]";
+  "h-10 w-full rounded-[8px] border border-[var(--color-line2)] bg-white px-4 text-sm text-ink outline-none transition-colors placeholder:text-ink3 focus:border-[var(--color-line3)] focus:bg-white";
 
 export const premiumSegmentedListClass =
-  "flex h-auto flex-wrap justify-start gap-2 rounded-full border border-slate-900/10 bg-[#2f3540]/94 p-1 shadow-[0_12px_28px_rgba(15,23,42,0.08)] dark:border-white/8 dark:bg-[#0f1520]/88 dark:shadow-none";
+  "flex h-auto w-fit flex-wrap justify-start gap-1 rounded-[10px] border border-[var(--color-line2)] bg-white p-1";
 
 export const premiumSegmentedTriggerClass =
-  "rounded-full border border-transparent px-5 text-xs uppercase tracking-[0.26em] text-slate-100/90 transition-colors hover:bg-white/[0.05] hover:text-white data-[state=active]:border-slate-950/60 data-[state=active]:bg-slate-950 data-[state=active]:text-white dark:text-white/62 dark:hover:bg-white/[0.06] dark:hover:text-white dark:data-[state=active]:border-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-slate-950";
+  "rounded-[7px] border border-transparent px-4 py-2 text-[11px] font-medium uppercase tracking-[0.8px] text-ink3 transition-all hover:text-ink data-[state=active]:bg-ink data-[state=active]:text-white";
 
 export const premiumTabsListClass = premiumSegmentedListClass;
 
@@ -23,10 +23,10 @@ export const premiumTabsTriggerClass = premiumSegmentedTriggerClass;
 
 export function premiumSegmentedButtonClass(active: boolean) {
   return cn(
-    "rounded-full border px-4 py-2 text-xs uppercase tracking-[0.24em] transition-colors",
+    "rounded-[7px] border px-4 py-2 text-[11px] font-medium uppercase tracking-[0.8px] transition-colors",
     active
-      ? "border-slate-950/60 bg-slate-950 text-white shadow-[0_10px_24px_rgba(15,23,42,0.12)] dark:border-white dark:bg-white dark:text-slate-950 dark:shadow-none"
-      : "border-transparent bg-transparent text-slate-100/90 hover:bg-white/[0.05] hover:text-white dark:text-white/56 dark:hover:bg-white/[0.08] dark:hover:text-white",
+      ? "border-ink bg-ink text-white"
+      : "border-transparent bg-transparent text-ink3 hover:bg-[var(--color-bg)] hover:text-ink",
   );
 }
 
@@ -47,20 +47,20 @@ export function DashboardPageHeader({
 }: DashboardPageHeaderProps) {
   return (
     <section className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-      <div className="space-y-3">
-        <div className="text-[11px] uppercase tracking-[0.38em] text-slate-500 dark:text-white/38">
+      <div>
+        <div className="mb-3 text-[11px] font-medium uppercase tracking-[2px] text-ink3">
           {eyebrow}
         </div>
-        <h1 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 dark:text-white sm:text-5xl">
+        <h1 className="font-display text-[64px] leading-[0.9] tracking-[1px] text-ink sm:text-[78px]">
           {title}
         </h1>
         {description ? (
-          <div className="max-w-3xl text-sm leading-7 text-slate-600 dark:text-white/52">
+          <div className="mt-4 max-w-3xl text-sm leading-6 text-ink2">
             {description}
           </div>
         ) : null}
         {meta?.length ? (
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-500 dark:text-white/52">
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink3">
             {meta.map((item) => (
               <span key={item}>{item}</span>
             ))}
@@ -83,8 +83,7 @@ export function DashboardPanel({
   return (
     <section
       className={cn(
-        "rounded-[2rem] border border-white/10 bg-[#0f1520]/88 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.3)] lg:p-5",
-        "border-slate-900/10 bg-[#2f3540]/92 shadow-[0_24px_80px_rgba(15,23,42,0.14)] dark:border-white/10 dark:bg-[#0f1520]/88 dark:shadow-[0_24px_80px_rgba(0,0,0,0.3)]",
+        "rounded-[14px] border border-[var(--color-line2)] bg-white p-4 lg:p-5",
         className,
       )}
     >
@@ -103,8 +102,7 @@ export function DataTableShell({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-[1.75rem] border border-white/8 bg-[#0b111a]/88",
-        "border-slate-900/10 bg-[#161d28]/92 dark:border-white/8 dark:bg-[#0b111a]/88",
+        "overflow-hidden rounded-[14px] border border-[var(--color-line2)] bg-white",
         className,
       )}
     >

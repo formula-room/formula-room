@@ -11,6 +11,10 @@ type CircuitOutlineProps = {
   alt: string;
   theme?: "dark" | "light";
   className?: string;
+  /** Width of the main trace line, in SVG user units. Defaults to 4.5 (the
+   * original weight used everywhere this component was already in use); the
+   * glow/base layers scale proportionally with it. */
+  strokeWidth?: number;
 };
 
 export function CircuitOutline({
@@ -19,6 +23,7 @@ export function CircuitOutline({
   alt,
   theme,
   className,
+  strokeWidth = 4.5,
 }: CircuitOutlineProps) {
   const outline = resolveCircuitOutline({ circuitId, circuitName });
 
@@ -57,7 +62,7 @@ export function CircuitOutline({
           d={outline.path}
           fill="none"
           stroke="var(--circuit-outline-glow)"
-          strokeWidth="12"
+          strokeWidth={strokeWidth * (12 / 4.5)}
           strokeLinecap="round"
           strokeLinejoin="round"
           opacity="var(--circuit-outline-glow-opacity)"
@@ -66,7 +71,7 @@ export function CircuitOutline({
           d={outline.path}
           fill="none"
           stroke="var(--circuit-outline-base)"
-          strokeWidth="8"
+          strokeWidth={strokeWidth * (8 / 4.5)}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -74,7 +79,7 @@ export function CircuitOutline({
           d={outline.path}
           fill="none"
           stroke="currentColor"
-          strokeWidth="4.5"
+          strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeLinejoin="round"
         />

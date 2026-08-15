@@ -27,16 +27,28 @@ function getReadMinutes(content: string | null) {
 }
 
 function ArticleBody({ content }: { content: string | null }) {
-  const paragraphs = (content?.trim() || "Full article copy is being prepared.")
+  const blocks = (content?.trim() || "Full article copy is being prepared.")
     .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
+    .map((block) => block.trim())
     .filter(Boolean);
 
   return (
     <section className="animate-fade-up animate-fade-up-3">
-      {paragraphs.map((paragraph, index) => {
-        const isQuote = paragraph.startsWith(">");
-        const text = isQuote ? paragraph.replace(/^>\s*/, "") : paragraph;
+      {blocks.map((block, index) => {
+        const imageMatch = block.match(/^\[image:(.+)]$/);
+        const isQuote = block.startsWith(">");
+        const text = isQuote ? block.replace(/^>\s*/, "") : block;
+
+        if (imageMatch) {
+          const imageSrc = imageMatch[1].trim();
+          return (
+            <figure key={`${imageSrc}-${index}`} className="my-8 overflow-hidden rounded-[12px]">
+              <div className="relative aspect-video">
+                <Image src={imageSrc} alt="" fill className="object-contain" />
+              </div>
+            </figure>
+          );
+        }
 
         if (isQuote) {
           return (

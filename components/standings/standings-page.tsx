@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchInternalApi } from "@/lib/client/internal-api";
 import { cn } from "@/lib/utils";
 import { getDriverHref, getTeamHref, getTeamHrefByName } from "@/lib/route-helpers";
+import { CountryFlag } from "@/components/shared/country-flag";
 import {
   DashCard,
   DashCardHead,
@@ -30,6 +31,7 @@ type DriverStanding = {
   position: string;
   driver: string;
   flag: string;
+  flagCountry: string;
   team: string;
   teamColor: string;
   points: string;
@@ -84,15 +86,6 @@ function gapToLeader(points: string | number, leaderPoints: number) {
   return `-${formatPoints(gap)}`;
 }
 
-function shortName(name: string) {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length < 2) {
-    return name;
-  }
-
-  return `${parts[0][0]}. ${parts.slice(1).join(" ")}`;
-}
-
 function abbrFromName(name: string) {
   const words = name.replace(/[^a-zA-Z0-9 ]/g, " ").trim().split(/\s+/);
   if (words.length === 1) {
@@ -100,6 +93,10 @@ function abbrFromName(name: string) {
   }
 
   return words.map((word) => word[0]).join("").slice(0, 3).toUpperCase();
+}
+
+function displayDriverName(name: string) {
+  return name === "Andrea Kimi Antonelli" ? "Kimi Antonelli" : name;
 }
 
 function teamIdFromText(value: string) {
@@ -237,17 +234,16 @@ function DriverRows({
                     </div>
                     <div className="min-w-0">
                       {driverHref ? (
-                        <Link href={driverHref} className="truncate font-semibold text-ink hover:text-[var(--color-red)]">
-                          <span className="mr-2">{row.flag}</span>
-                          {row.driver}
+                        <Link href={driverHref} className="flex min-w-0 items-center gap-2 font-semibold text-ink hover:text-[var(--color-red)]">
+                          <CountryFlag country={row.flagCountry || row.flag} className="h-5 w-7 flex-shrink-0 rounded-[3px] border-[var(--color-line2)] bg-white" />
+                          <span className="truncate">{displayDriverName(row.driver)}</span>
                         </Link>
                       ) : (
-                        <span className="truncate font-semibold text-ink">
-                          <span className="mr-2">{row.flag}</span>
-                          {row.driver}
+                        <span className="flex min-w-0 items-center gap-2 font-semibold text-ink">
+                          <CountryFlag country={row.flagCountry || row.flag} className="h-5 w-7 flex-shrink-0 rounded-[3px] border-[var(--color-line2)] bg-white" />
+                          <span className="truncate">{displayDriverName(row.driver)}</span>
                         </span>
                       )}
-                      <div className="mt-0.5 text-xs text-ink3">{shortName(row.driver)}</div>
                     </div>
                     <div className="min-w-0 text-sm text-ink2">
                       {teamHref ? (
@@ -464,6 +460,12 @@ export function StandingsPageView() {
   const [seasons, setSeasons] = useState<string[]>([]);
   const [season, setSeason] = useState("");
   const [tab, setTab] = useState<StandingsTab>("drivers");
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("tab") === "teams") {
+      setTab("teams");
+    }
+  }, []);
   const [search, setSearch] = useState("");
   const [drivers, setDrivers] = useState<DriverStanding[]>([]);
   const [teams, setTeams] = useState<TeamStanding[]>([]);
@@ -605,7 +607,7 @@ export function StandingsPageView() {
               <SelectItem
                 key={option}
                 value={option}
-                className="focus:bg-slate-950/8 focus:text-slate-950 dark:focus:bg-white/8 dark:focus:text-white"
+                className="focus:bg-[var(--color-bg)] focus:text-ink"
               >
                 Season {option}
               </SelectItem>

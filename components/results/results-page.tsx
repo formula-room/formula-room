@@ -95,16 +95,16 @@ function SummaryCard({
   value: string;
 }) {
   return (
-    <Card className="rounded-[1.5rem] border-white/10 bg-[#0f1520]/88 p-5">
-      <div className="text-[11px] uppercase tracking-[0.28em] text-white/36">{label}</div>
+    <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-5">
+      <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">{label}</div>
       <div className="mt-4 flex items-start gap-3">
-        <div className="flex size-11 items-center justify-center rounded-full border border-white/8 bg-white/[0.04] text-xl">
+        <div className="flex size-11 items-center justify-center rounded-[10px] border border-[var(--color-line2)] bg-[var(--color-bg)] text-xl">
           {flag}
         </div>
         <div className="min-w-0">
-          <div className="truncate text-base font-semibold text-white">{driver}</div>
-          <div className="mt-1 text-sm text-white/48">{team}</div>
-          <div className="mt-3 text-lg font-medium text-[#ff8b68]">{value}</div>
+          <div className="truncate text-base font-semibold text-ink">{driver}</div>
+          <div className="mt-1 text-sm text-ink3">{team}</div>
+          <div className="mt-3 font-display text-[22px] leading-none tracking-[0.5px] text-[var(--color-red)]">{value}</div>
         </div>
       </div>
     </Card>
@@ -121,22 +121,22 @@ function EventHeader({
   const eventHref = event.href || getEventHrefBySlug(event.slug);
 
   return (
-    <Card className="rounded-[1.75rem] border-white/10 bg-[#0f1520]/88 p-6">
+    <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-6">
       <div className="space-y-3">
-        <div className="text-[11px] uppercase tracking-[0.34em] text-white/36">Selected Session</div>
+        <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Selected Session</div>
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">{event.grandPrix}</h2>
-            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-white/54">
+            <h2 className="font-display text-[34px] leading-none tracking-[1px] text-ink sm:text-[42px]">{event.grandPrix}</h2>
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink3">
               <span>{event.circuit}</span>
               <span>{session.date}</span>
-              <Badge className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-white/70">
+              <Badge className="rounded-[4px] border border-[var(--color-line2)] bg-[var(--color-bg)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.8px] text-ink3">
                 {session.type}
               </Badge>
             </div>
           </div>
           {eventHref ? (
-            <Link href={eventHref} className="text-sm text-[#ff8b68] hover:text-[#ffab91]">
+            <Link href={eventHref} className="text-sm font-medium text-ink2 hover:text-[var(--color-red)]">
               Open weekend schedule
             </Link>
           ) : null}
@@ -165,18 +165,18 @@ function ResultsTable({
     <DataTableShell>
       <Table>
         <TableHeader>
-          <TableRow className="border-white/8 hover:bg-transparent">
-            <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">Position</TableHead>
-            <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">Driver</TableHead>
-            <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">Team</TableHead>
+          <TableRow className="border-[var(--color-line)] hover:bg-transparent">
+            <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Position</TableHead>
+            <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Driver</TableHead>
+            <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Team</TableHead>
             {showRaceColumns ? (
-              <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">Laps</TableHead>
+              <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Laps</TableHead>
             ) : null}
-            <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">Time / Gap</TableHead>
+            <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Time / Gap</TableHead>
             {showRaceColumns ? (
-              <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">Points</TableHead>
+              <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Points</TableHead>
             ) : null}
-            <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">Status</TableHead>
+            <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -185,15 +185,15 @@ function ResultsTable({
             const teamHref = getTeamHrefByName(row.team);
 
             return (
-              <TableRow key={`${sessionType}-${row.position}-${row.driver}`} className="border-white/8 hover:bg-white/[0.03]">
-                <TableCell className="px-5 py-4 text-sm font-semibold text-white/88">{row.position}</TableCell>
+              <TableRow key={`${sessionType}-${row.position}-${row.driver}`} className="border-[var(--color-line)] hover:bg-[var(--color-bg)]">
+                <TableCell className="px-5 py-4 text-sm font-semibold text-ink">{row.position}</TableCell>
                 <TableCell className="px-5 py-4">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-1 rounded-full" style={{ backgroundColor: row.teamColor }} />
                     <div className="min-w-0">
-                      <div className="truncate text-sm font-medium text-white">
+                      <div className="truncate text-sm font-medium text-ink">
                         {driverHref ? (
-                          <Link href={driverHref} className="inline-flex items-center gap-2 hover:text-[#ff8b68]">
+                          <Link href={driverHref} className="inline-flex items-center gap-2 hover:text-[var(--color-red)]">
                             <span>{row.flag}</span>
                             <span>{row.driver}</span>
                           </Link>
@@ -204,27 +204,27 @@ function ResultsTable({
                           </>
                         )}
                       </div>
-                      <div className="mt-1 text-xs text-white/36 lg:hidden">{row.team}</div>
+                      <div className="mt-1 text-xs text-ink3 lg:hidden">{row.team}</div>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-white/58">
-                  {teamHref ? <Link href={teamHref} className="hover:text-white">{row.team}</Link> : row.team}
+                <TableCell className="px-5 py-4 text-sm text-ink2">
+                  {teamHref ? <Link href={teamHref} className="hover:text-[var(--color-red)]">{row.team}</Link> : row.team}
                 </TableCell>
                 {showRaceColumns ? (
-                  <TableCell className="px-5 py-4 text-sm text-white/72">{row.laps ?? "--"}</TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-ink2">{row.laps ?? "--"}</TableCell>
                 ) : null}
-                <TableCell className="px-5 py-4 text-sm text-white/82">{row.timeOrGap}</TableCell>
+                <TableCell className="px-5 py-4 text-sm text-ink">{row.timeOrGap}</TableCell>
                 {showRaceColumns ? (
-                  <TableCell className="px-5 py-4 text-sm text-white/82">{row.points ?? "--"}</TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-ink">{row.points ?? "--"}</TableCell>
                 ) : null}
-                <TableCell className="px-5 py-4 text-sm text-white/56">{row.status}</TableCell>
+                <TableCell className="px-5 py-4 text-sm text-ink3">{row.status}</TableCell>
               </TableRow>
             );
           })}
           {filteredRows.length === 0 ? (
-            <TableRow className="border-white/8 hover:bg-transparent">
-              <TableCell colSpan={showRaceColumns ? 7 : 5} className="px-5 py-14 text-center text-sm text-white/44">
+            <TableRow className="border-[var(--color-line)] hover:bg-transparent">
+              <TableCell colSpan={showRaceColumns ? 7 : 5} className="px-5 py-14 text-center text-sm text-ink3">
                 No matching entries for the current search.
               </TableCell>
             </TableRow>
@@ -430,7 +430,7 @@ export function ResultsPageView() {
             </SelectTrigger>
             <SelectContent className={premiumSelectContentClass}>
               {seasons.map((option) => (
-                <SelectItem key={option} value={option} className="focus:bg-white/8 focus:text-white">
+                <SelectItem key={option} value={option} className="focus:bg-[var(--color-bg)] focus:text-ink">
                   Season {option}
                 </SelectItem>
               ))}
@@ -454,7 +454,7 @@ export function ResultsPageView() {
               </SelectTrigger>
               <SelectContent className={premiumSelectContentClass}>
                 {availableEvents.map((event) => (
-                  <SelectItem key={event.href} value={event.round} className="focus:bg-white/8 focus:text-white">
+                  <SelectItem key={event.href} value={event.round} className="focus:bg-[var(--color-bg)] focus:text-ink">
                     {event.grandPrix}
                   </SelectItem>
                 ))}
@@ -467,7 +467,7 @@ export function ResultsPageView() {
               </SelectTrigger>
               <SelectContent className={premiumSelectContentClass}>
                 {validSessionTypes.map((type) => (
-                  <SelectItem key={type} value={type} className="focus:bg-white/8 focus:text-white">
+                  <SelectItem key={type} value={type} className="focus:bg-[var(--color-bg)] focus:text-ink">
                     {type}
                   </SelectItem>
                 ))}
@@ -476,7 +476,7 @@ export function ResultsPageView() {
           </div>
 
           <div className="relative w-full lg:max-w-[320px]">
-            <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-white/34" />
+            <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-ink3" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -500,7 +500,7 @@ export function ResultsPageView() {
                 className={
                   type === sessionType
                     ? undefined
-                    : "text-slate-700 hover:bg-slate-950/6 hover:text-slate-950 dark:text-white/56 dark:hover:bg-white/[0.08] dark:hover:text-white"
+                    : "text-ink3 hover:bg-[var(--color-bg)] hover:text-ink"
                 }
               >
                 {type}
@@ -519,13 +519,13 @@ export function ResultsPageView() {
           {selectedSession.rows.length > 0 ? (
             <ResultsTable rows={selectedSession.rows} sessionType={selectedSession.type} query={query} />
           ) : (
-            <Card className="rounded-[1.75rem] border-white/10 bg-[#0f1520]/88 p-8 text-center text-white/56">
+            <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-8 text-center text-ink3">
               {selectedSession.type} data is unavailable for this event.
             </Card>
           )}
         </>
       ) : (
-        <Card className="rounded-[1.75rem] border-white/10 bg-[#0f1520]/88 p-8 text-center text-white/56">
+        <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-8 text-center text-ink3">
           {loading ? "Loading results..." : (error ?? `No event dataset is wired for season ${season} yet.`)}
         </Card>
       )}

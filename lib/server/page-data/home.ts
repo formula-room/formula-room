@@ -519,7 +519,7 @@ export async function getHomePageData() {
   const [nextRace, lastRace, news] = await Promise.all([
     getRaceByDateBoundary("next"),
     getRaceByDateBoundary("last"),
-    getLatestNews(5),
+    getLatestNews(9),
   ]);
 
   const lastRacePodium = lastRace ? await getPodiumForRace(lastRace.raceId) : [];

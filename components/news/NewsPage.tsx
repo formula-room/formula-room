@@ -115,7 +115,7 @@ export function NewsPageView() {
         </label>
       </section>
 
-      <section className="flex flex-col gap-[10px] animate-fade-up animate-fade-up-3">
+      <section className="animate-fade-up animate-fade-up-3">
         {loading ? (
           <div className="flex min-h-[220px] items-center justify-center rounded-[12px] border border-dashed border-[var(--color-line2)] bg-[var(--color-bg)] px-6 text-center text-sm text-ink2">
             Loading news...
@@ -125,7 +125,11 @@ export function NewsPageView() {
             {error}
           </div>
         ) : filteredArticles.length > 0 ? (
-          filteredArticles.map((article) => <NewsArticleRow key={article.id} article={article} />)
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
+            {filteredArticles.map((article) => (
+              <NewsArticleRow key={article.id} article={article} />
+            ))}
+          </div>
         ) : (
           <div className="flex min-h-[260px] flex-col items-center justify-center gap-3 rounded-[12px] border border-dashed border-[var(--color-line2)] bg-[var(--color-bg)] px-6 text-center">
             <Search className="h-8 w-8 text-ink3" />

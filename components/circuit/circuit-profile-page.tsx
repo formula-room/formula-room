@@ -28,9 +28,9 @@ function StatCard({
   value: string;
 }) {
   return (
-    <Card className="gap-0 rounded-[1.5rem] border-slate-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
-      <div className="text-[11px] uppercase tracking-[0.28em] text-slate-400">{label}</div>
-      <div className="mt-4 text-2xl font-semibold tracking-[-0.04em] text-slate-950">{value}</div>
+    <Card className="gap-0 rounded-[14px] border-[var(--color-line2)] bg-white p-5">
+      <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">{label}</div>
+      <div className="mt-4 font-display text-[28px] leading-none tracking-[0.5px] text-ink">{value}</div>
     </Card>
   );
 }
@@ -45,10 +45,10 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="gap-0 rounded-[1.8rem] border-slate-200 bg-white p-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+    <Card className="gap-0 rounded-[14px] border-[var(--color-line2)] bg-white p-5">
       <div>
-        <h2 className="text-xl font-semibold tracking-[-0.03em] text-slate-950">{title}</h2>
-        {description && <div className="mt-1 text-sm text-slate-500">{description}</div>}
+        <h2 className="font-display text-[24px] leading-none tracking-[1px] text-ink">{title}</h2>
+        {description && <div className="mt-1 text-sm text-ink3">{description}</div>}
       </div>
       <div className="mt-6">{children}</div>
     </Card>
@@ -63,16 +63,16 @@ function SummaryFact({
   value: string;
 }) {
   return (
-    <div className="rounded-[1.2rem] border border-slate-200 bg-slate-50 px-4 py-4">
-      <div className="text-[11px] uppercase tracking-[0.24em] text-slate-400">{label}</div>
-      <div className="mt-2 text-sm font-medium text-slate-800">{value}</div>
+    <div className="rounded-[10px] border border-[var(--color-line2)] bg-[var(--color-bg)] px-4 py-4">
+      <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">{label}</div>
+      <div className="mt-2 text-sm font-medium text-ink">{value}</div>
     </div>
   );
 }
 
 function LightTableShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white">
+    <div className="overflow-hidden rounded-[14px] border border-[var(--color-line2)] bg-white">
       {children}
     </div>
   );
@@ -120,16 +120,16 @@ export function CircuitProfilePageView({
 
   if (loading) {
     return (
-      <Card className="rounded-[1.8rem] border-slate-200 bg-white p-8 text-center shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
-        <div className="text-sm text-slate-500">Loading circuit profile...</div>
+      <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-8 text-center">
+        <div className="text-sm text-ink3">Loading circuit profile...</div>
       </Card>
     );
   }
 
   if (error || !circuit) {
     return (
-      <Card className="rounded-[1.8rem] border-slate-200 bg-white p-8 text-center shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
-        <div className="text-sm text-[#d14f3b]">{error ?? "Circuit profile data is not available yet."}</div>
+      <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-8 text-center">
+        <div className="text-sm text-[var(--color-red)]">{error ?? "Circuit profile data is not available yet."}</div>
       </Card>
     );
   }
@@ -138,9 +138,9 @@ export function CircuitProfilePageView({
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      <section className="rounded-[2.2rem] border border-slate-200 bg-white p-6 shadow-[0_26px_80px_rgba(15,23,42,0.12)] lg:p-8">
+      <section className="rounded-[16px] border border-[var(--color-line2)] bg-white p-6 lg:p-8">
         <div className="grid gap-8 lg:grid-cols-[420px_minmax(0,1fr)] lg:items-center">
-          <div className="flex items-center justify-center rounded-[1.8rem] border border-slate-200 bg-slate-50 p-8">
+          <div className="flex items-center justify-center rounded-[14px] border border-[var(--color-line2)] bg-[var(--color-bg)] p-8">
             <CircuitOutline
               circuitId={circuit.circuitId}
               circuitName={circuit.name}
@@ -151,27 +151,27 @@ export function CircuitProfilePageView({
           </div>
 
           <div className="text-left">
-            <div className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-slate-600 inline-block">
+            <div className="inline-block rounded-[6px] border border-[var(--color-line2)] bg-[var(--color-bg)] px-3 py-1.5 text-[10px] font-medium uppercase tracking-[1px] text-ink3">
               Circuit Profile
             </div>
-            <h1 className="mt-5 text-4xl font-semibold tracking-[-0.05em] text-slate-950 sm:text-5xl">
+            <h1 className="mt-5 font-display text-[52px] leading-[0.9] tracking-[1px] text-ink sm:text-[64px]">
               {circuit.name}
             </h1>
-            <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-700">
+            <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink2">
               <span>{circuit.location}</span>
               <span>{circuit.activeGrandPrix}</span>
               <span>Since {circuit.sinceYear}</span>
             </div>
-            <div className="mt-4 max-w-3xl text-sm leading-7 text-slate-500">
+            <div className="mt-4 max-w-3xl text-sm leading-7 text-ink2">
               {circuit.supportingInfo}
             </div>
             <div className="mt-5 flex flex-wrap gap-3">
               {eventHref ? (
-                <Link href={eventHref} className="text-sm font-medium text-slate-700 hover:text-slate-950">
+                <Link href={eventHref} className="text-sm font-medium text-ink2 hover:text-[var(--color-red)]">
                   Open active weekend schedule
                 </Link>
               ) : null}
-              <Link href="/grand-prix" className="text-sm font-medium text-slate-700 hover:text-slate-950">
+              <Link href="/grand-prix" className="text-sm font-medium text-ink2 hover:text-[var(--color-red)]">
                 Open Grand Prix statistics
               </Link>
             </div>
@@ -229,18 +229,18 @@ export function CircuitProfilePageView({
             <LightTableShell>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-slate-200 hover:bg-transparent">
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Record</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Holder</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Value</TableHead>
+                  <TableRow className="border-[var(--color-line)] hover:bg-transparent">
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Record</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Holder</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Value</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {circuit.records.map((row) => (
-                    <TableRow key={`${row.record}-${row.holder}`} className="border-slate-200 hover:bg-slate-50/70">
-                      <TableCell className="px-5 py-4 text-sm font-medium text-slate-900">{row.record}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.holder}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.value}</TableCell>
+                    <TableRow key={`${row.record}-${row.holder}`} className="border-[var(--color-line)] hover:bg-[var(--color-bg)]">
+                      <TableCell className="px-5 py-4 text-sm font-medium text-ink">{row.record}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.holder}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.value}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -254,24 +254,24 @@ export function CircuitProfilePageView({
             <LightTableShell>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-slate-200 hover:bg-transparent">
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Year</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Grand Prix</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Winner</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Team</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Pole Sitter</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Fastest Lap</TableHead>
+                  <TableRow className="border-[var(--color-line)] hover:bg-transparent">
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Year</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Grand Prix</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Winner</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Team</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Pole Sitter</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Fastest Lap</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {circuit.raceHistory.map((row) => (
-                    <TableRow key={`${row.year}-${row.grandPrix}`} className="border-slate-200 hover:bg-slate-50/70">
-                      <TableCell className="px-5 py-4 text-sm font-medium text-slate-900">{row.year}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.grandPrix}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.winner}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.team}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.poleSitter}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.fastestLap}</TableCell>
+                    <TableRow key={`${row.year}-${row.grandPrix}`} className="border-[var(--color-line)] hover:bg-[var(--color-bg)]">
+                      <TableCell className="px-5 py-4 text-sm font-medium text-ink">{row.year}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.grandPrix}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.winner}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.team}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.poleSitter}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.fastestLap}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -285,20 +285,20 @@ export function CircuitProfilePageView({
             <LightTableShell>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-slate-200 hover:bg-transparent">
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Year</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Winner</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Team</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Note</TableHead>
+                  <TableRow className="border-[var(--color-line)] hover:bg-transparent">
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Year</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Winner</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Team</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Note</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {circuit.winners.map((row) => (
-                    <TableRow key={`${row.year}-${row.entry}`} className="border-slate-200 hover:bg-slate-50/70">
-                      <TableCell className="px-5 py-4 text-sm font-medium text-slate-900">{row.year}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.entry}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.teamOrContext}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.note}</TableCell>
+                    <TableRow key={`${row.year}-${row.entry}`} className="border-[var(--color-line)] hover:bg-[var(--color-bg)]">
+                      <TableCell className="px-5 py-4 text-sm font-medium text-ink">{row.year}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.entry}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.teamOrContext}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.note}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -312,20 +312,20 @@ export function CircuitProfilePageView({
             <LightTableShell>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-slate-200 hover:bg-transparent">
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Year</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Pole Sitter</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Team</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Note</TableHead>
+                  <TableRow className="border-[var(--color-line)] hover:bg-transparent">
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Year</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Pole Sitter</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Team</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Note</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {circuit.poleSitters.map((row) => (
-                    <TableRow key={`${row.year}-${row.entry}`} className="border-slate-200 hover:bg-slate-50/70">
-                      <TableCell className="px-5 py-4 text-sm font-medium text-slate-900">{row.year}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.entry}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.teamOrContext}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.note}</TableCell>
+                    <TableRow key={`${row.year}-${row.entry}`} className="border-[var(--color-line)] hover:bg-[var(--color-bg)]">
+                      <TableCell className="px-5 py-4 text-sm font-medium text-ink">{row.year}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.entry}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.teamOrContext}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.note}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -339,20 +339,20 @@ export function CircuitProfilePageView({
             <LightTableShell>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-slate-200 hover:bg-transparent">
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Year</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Driver</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Team</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Note</TableHead>
+                  <TableRow className="border-[var(--color-line)] hover:bg-transparent">
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Year</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Driver</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Team</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Note</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {circuit.fastestLaps.map((row) => (
-                    <TableRow key={`${row.year}-${row.entry}`} className="border-slate-200 hover:bg-slate-50/70">
-                      <TableCell className="px-5 py-4 text-sm font-medium text-slate-900">{row.year}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.entry}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.teamOrContext}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.note}</TableCell>
+                    <TableRow key={`${row.year}-${row.entry}`} className="border-[var(--color-line)] hover:bg-[var(--color-bg)]">
+                      <TableCell className="px-5 py-4 text-sm font-medium text-ink">{row.year}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.entry}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.teamOrContext}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.note}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

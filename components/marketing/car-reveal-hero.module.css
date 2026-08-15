@@ -40,15 +40,58 @@
 }
 
 .aeroFilter {
-  filter: grayscale(0.6) brightness(1.05) contrast(1.08);
+  filter: grayscale(0.35) brightness(1.04) contrast(1.06);
 }
 
-.aeroTint {
+/*
+ * .aeroSurfaceTint and .aeroContour are masked to the car's own alpha
+ * silhouette via an inline mask-image (see carMaskStyle in the component,
+ * built from baseSrc) so the cyan/white treatment only ever paints over the
+ * car pixels themselves, never as a rectangular panel over the stage.
+ */
+.aeroSurfaceTint {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  mix-blend-mode: color;
-  background: linear-gradient(160deg, rgba(59, 130, 246, 0.32) 0%, rgba(34, 211, 238, 0.26) 45%, rgba(15, 23, 42, 0.14) 100%);
+  mix-blend-mode: screen;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background: radial-gradient(ellipse 70% 65% at 46% 42%, rgba(125, 224, 235, 0.55) 0%, rgba(96, 165, 230, 0.3) 55%, rgba(59, 130, 246, 0.12) 100%);
+}
+
+.aeroContour {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.55;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-image: repeating-linear-gradient(
+    -18deg,
+    transparent 0px 7px,
+    rgba(190, 238, 246, 0.4) 7px 8px,
+    transparent 8px 16px,
+    rgba(248, 250, 252, 0.22) 16px 17px
+  );
+  animation: contourFlow 6.5s linear infinite;
+}
+
+@keyframes contourFlow {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 240px 80px;
+  }
 }
 
 .hint {
@@ -68,5 +111,9 @@
 @media (prefers-reduced-motion: reduce) {
   .aeroLayer {
     transition: none;
+  }
+
+  .aeroContour {
+    animation: none;
   }
 }

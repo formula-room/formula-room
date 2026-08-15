@@ -2,35 +2,22 @@ import { cn } from "@/lib/utils";
 
 import styles from "./aero-flow-overlay.module.css";
 
-function cleanFlowPath(y: number) {
-  return `M60,${y} C200,${y - 70} 320,${y - 90} 460,${y - 80} C650,${y - 70} 900,${y - 60} 1100,${y - 65} C1280,${y - 70} 1380,${y - 110} 1460,${y - 60} C1500,${y - 30} 1520,${y + 10} 1550,${y + 30}`;
-}
-
-function wakeFlowPath(y: number) {
-  return `M60,${y} C200,${y - 50} 320,${y - 65} 460,${y - 55} C650,${y - 45} 900,${y - 40} 1100,${y - 45} C1220,${y - 50} 1280,${y - 20} 1340,${y + 30} C1400,${y + 60} 1460,${y - 10} 1500,${y + 20} C1520,${y + 35} 1535,${y + 5} 1550,${y + 15}`;
-}
-
-const FLOW_LINES = [
-  { d: cleanFlowPath(190), className: cn(styles.line, styles.white, styles.speedA) },
-  { d: cleanFlowPath(235), className: cn(styles.line, styles.white, styles.speedB) },
-  { d: cleanFlowPath(280), className: cn(styles.line, styles.white, styles.speedC) },
-  { d: cleanFlowPath(325), className: cn(styles.line, styles.white, styles.speedA) },
-  { d: cleanFlowPath(370), className: cn(styles.line, styles.white, styles.speedB) },
-  { d: cleanFlowPath(415), className: cn(styles.line, styles.cyan, styles.speedC) },
-  { d: cleanFlowPath(460), className: cn(styles.line, styles.cyan, styles.speedA) },
-  { d: cleanFlowPath(505), className: cn(styles.line, styles.cyan, styles.speedB) },
-  { d: cleanFlowPath(550), className: cn(styles.line, styles.cyan, styles.speedC) },
-  { d: cleanFlowPath(595), className: cn(styles.line, styles.cyan, styles.speedA) },
-  { d: wakeFlowPath(640), className: cn(styles.line, styles.blue, styles.speedB) },
-  { d: wakeFlowPath(685), className: cn(styles.line, styles.blue, styles.speedC) },
-  { d: wakeFlowPath(730), className: cn(styles.line, styles.blue, styles.speedA) },
-  { d: wakeFlowPath(770), className: cn(styles.line, styles.blue, styles.speedB) },
+// Short, zone-specific streamlines only — front wing, floor edge, rear
+// wheel, diffuser and wake. Deliberately sparse: this is secondary,
+// restrained ambient motion around the car, not a field covering the canvas.
+const EXTERNAL_LINES = [
+  { d: "M70,640 C140,610 220,615 300,635", gradient: "fadeWhite", className: cn(styles.line, styles.speedA) },
+  { d: "M60,682 C130,662 210,664 292,678", gradient: "fadeCyan", className: cn(styles.line, styles.speedC) },
+  { d: "M480,748 C700,738 950,741 1180,745", gradient: "fadeCyan", className: cn(styles.line, styles.speedB) },
+  { d: "M1235,612 C1298,592 1358,597 1408,618", gradient: "fadeWhite", className: cn(styles.line, styles.speedA) },
+  { d: "M1298,702 C1358,732 1418,716 1468,682", gradient: "fadeBlue", className: cn(styles.line, styles.speedC) },
+  { d: "M1458,542 C1498,562 1518,592 1498,622", gradient: "fadeBlue", className: cn(styles.line, styles.speedB) },
+  { d: "M1478,602 C1518,632 1538,656 1512,686", gradient: "fadeBlue", className: cn(styles.line, styles.speedA) },
 ];
 
 const VORTICES = [
-  { x: 1350, y: 560, scale: 1 },
-  { x: 1420, y: 660, scale: 1.15 },
-  { x: 1380, y: 740, scale: 0.9 },
+  { x: 1400, y: 648, scale: 0.85 },
+  { x: 1478, y: 598, scale: 0.7 },
 ];
 
 export function AeroFlowOverlay() {
@@ -42,14 +29,34 @@ export function AeroFlowOverlay() {
       aria-hidden="true"
       focusable="false"
     >
-      {FLOW_LINES.map((line, index) => (
-        <path key={index} d={line.d} className={line.className} strokeWidth={1.4} />
+      <defs>
+        <linearGradient id="fadeWhite" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor="#F8FAFC" stopOpacity="0" />
+          <stop offset="22%" stopColor="#F8FAFC" stopOpacity="0.26" />
+          <stop offset="78%" stopColor="#F8FAFC" stopOpacity="0.26" />
+          <stop offset="100%" stopColor="#F8FAFC" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="fadeCyan" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor="#7DE0EB" stopOpacity="0" />
+          <stop offset="22%" stopColor="#7DE0EB" stopOpacity="0.28" />
+          <stop offset="78%" stopColor="#7DE0EB" stopOpacity="0.28" />
+          <stop offset="100%" stopColor="#7DE0EB" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="fadeBlue" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor="#60A5E6" stopOpacity="0" />
+          <stop offset="22%" stopColor="#60A5E6" stopOpacity="0.24" />
+          <stop offset="78%" stopColor="#60A5E6" stopOpacity="0.24" />
+          <stop offset="100%" stopColor="#60A5E6" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {EXTERNAL_LINES.map((line, index) => (
+        <path key={index} d={line.d} stroke={`url(#${line.gradient})`} strokeWidth={1.1} className={line.className} />
       ))}
       {VORTICES.map((vortex, index) => (
         <g key={index} transform={`translate(${vortex.x} ${vortex.y}) scale(${vortex.scale})`}>
           <g className={styles.vortex}>
-            <path d="M-20,6 C-22,-10 -8,-22 8,-18 C22,-14 26,0 16,10 C8,18 -4,16 -8,6" strokeWidth={1.3} />
-            <path d="M-10,3 C-11,-5 -3,-11 5,-9 C11,-7 13,0 8,5" strokeWidth={1.3} />
+            <path d="M-20,6 C-22,-10 -8,-22 8,-18 C22,-14 26,0 16,10 C8,18 -4,16 -8,6" strokeWidth={1.1} />
+            <path d="M-10,3 C-11,-5 -3,-11 5,-9 C11,-7 13,0 8,5" strokeWidth={1.1} />
           </g>
         </g>
       ))}

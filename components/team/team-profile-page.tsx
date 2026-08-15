@@ -29,9 +29,9 @@ function StatCard({
   accent: string;
 }) {
   return (
-    <Card className="gap-0 rounded-[1.5rem] border-slate-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
-      <div className="text-[11px] uppercase tracking-[0.28em] text-slate-400">{label}</div>
-      <div className="mt-4 text-3xl font-semibold tracking-[-0.04em]" style={{ color: accent }}>
+    <Card className="gap-0 rounded-[14px] border-[var(--color-line2)] bg-white p-5">
+      <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">{label}</div>
+      <div className="mt-4 font-display text-[32px] leading-none tracking-[0.5px]" style={{ color: accent }}>
         {value}
       </div>
     </Card>
@@ -48,10 +48,10 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="gap-0 rounded-[1.8rem] border-slate-200 bg-white p-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+    <Card className="gap-0 rounded-[14px] border-[var(--color-line2)] bg-white p-5">
       <div>
-        <h2 className="text-xl font-semibold tracking-[-0.03em] text-slate-950">{title}</h2>
-        {description && <div className="mt-1 text-sm text-slate-500">{description}</div>}
+        <h2 className="font-display text-[24px] leading-none tracking-[1px] text-ink">{title}</h2>
+        {description && <div className="mt-1 text-sm text-ink3">{description}</div>}
       </div>
       <div className="mt-6">{children}</div>
     </Card>
@@ -66,16 +66,16 @@ function SummaryFact({
   value: string;
 }) {
   return (
-    <div className="rounded-[1.2rem] border border-slate-200 bg-slate-50 px-4 py-4">
-      <div className="text-[11px] uppercase tracking-[0.24em] text-slate-400">{label}</div>
-      <div className="mt-2 text-sm font-medium text-slate-800">{value}</div>
+    <div className="rounded-[10px] border border-[var(--color-line2)] bg-[var(--color-bg)] px-4 py-4">
+      <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">{label}</div>
+      <div className="mt-2 text-sm font-medium text-ink">{value}</div>
     </div>
   );
 }
 
 function LightTableShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white">
+    <div className="overflow-hidden rounded-[14px] border border-[var(--color-line2)] bg-white">
       {children}
     </div>
   );
@@ -89,9 +89,9 @@ function HeroMetric({
   value: string;
 }) {
   return (
-    <div className="rounded-[1.2rem] border border-slate-900/10 bg-white/58 px-4 py-4 backdrop-blur-sm">
-      <div className="text-[10px] uppercase tracking-[0.26em] text-slate-500">{label}</div>
-      <div className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-slate-950">{value}</div>
+    <div className="rounded-[10px] border border-[var(--color-line2)] bg-white/76 px-4 py-4 backdrop-blur-sm">
+      <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">{label}</div>
+      <div className="mt-2 font-display text-[28px] leading-none tracking-[0.5px] text-ink">{value}</div>
     </div>
   );
 }
@@ -138,16 +138,16 @@ export function TeamProfilePageView({
 
   if (loading) {
     return (
-      <Card className="rounded-[1.8rem] border-slate-200 bg-white p-8 text-center shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
-        <div className="text-sm text-slate-500">Loading team profile...</div>
+      <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-8 text-center">
+        <div className="text-sm text-ink3">Loading team profile...</div>
       </Card>
     );
   }
 
   if (error || !team) {
     return (
-      <Card className="rounded-[1.8rem] border-slate-200 bg-white p-8 text-center shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
-        <div className="text-sm text-[#d14f3b]">{error ?? "Team profile data is not available yet."}</div>
+      <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-8 text-center">
+        <div className="text-sm text-[var(--color-red)]">{error ?? "Team profile data is not available yet."}</div>
       </Card>
     );
   }
@@ -155,7 +155,7 @@ export function TeamProfilePageView({
   return (
     <div className="space-y-6 lg:space-y-8">
       <section
-        className="overflow-hidden rounded-[2.2rem] border border-white/50 bg-white shadow-[0_26px_80px_rgba(15,23,42,0.18)]"
+        className="overflow-hidden rounded-[16px] border border-[var(--color-line2)] bg-white"
         style={{
           backgroundImage: `linear-gradient(135deg, ${team.accent} 0%, ${team.accentSoft} 42%, #ffffff 100%)`,
         }}
@@ -163,31 +163,31 @@ export function TeamProfilePageView({
         <div className="grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:p-8">
           <div className="space-y-6">
             <div className="flex flex-wrap items-center gap-3">
-              <div className="rounded-full border border-slate-900/10 bg-white/70 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-slate-700">
+              <div className="rounded-[6px] border border-[var(--color-line2)] bg-white/76 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[1px] text-ink2">
                 Team Profile
               </div>
-              <div className="rounded-full border border-slate-900/10 bg-white/70 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-slate-700">
+              <div className="rounded-[6px] border border-[var(--color-line2)] bg-white/76 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[1px] text-ink2">
                 {team.eraLabel}
               </div>
-              <div className="rounded-full border border-slate-900/10 bg-white/70 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-slate-700">
+              <div className="rounded-[6px] border border-[var(--color-line2)] bg-white/76 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[1px] text-ink2">
                 {team.statusLabel}
               </div>
             </div>
 
             <div>
-              <h1 className="text-4xl font-semibold tracking-[-0.05em] text-slate-950 sm:text-5xl">
+              <h1 className="font-display text-[52px] leading-[0.9] tracking-[1px] text-ink sm:text-[64px]">
                 {team.name}
               </h1>
-              <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-700">
+              <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink2">
                 <span>{team.nationality}</span>
                 <span>First season: {team.firstSeason}</span>
                 <span>{team.activeYears}</span>
               </div>
             </div>
 
-            <div className="max-w-3xl rounded-[1.6rem] border border-slate-900/10 bg-white/46 px-5 py-5 backdrop-blur-sm">
-              <div className="text-[11px] uppercase tracking-[0.28em] text-slate-500">Constructor Snapshot</div>
-              <div className="mt-3 text-base leading-7 text-slate-800">
+            <div className="max-w-3xl rounded-[14px] border border-[var(--color-line2)] bg-white/70 px-5 py-5 backdrop-blur-sm">
+              <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Constructor Snapshot</div>
+              <div className="mt-3 text-base leading-7 text-ink2">
                 {team.name} sits in the database as a {team.statusLabel.toLowerCase()} with coverage spanning{" "}
                 {team.activeYears}. This profile combines stored race, qualifying, sprint, and standings data into a
                 single constructor view without switching away from the standings context.
@@ -201,26 +201,26 @@ export function TeamProfilePageView({
             </div>
           </div>
 
-          <div className="rounded-[1.8rem] border border-slate-900/10 bg-white/78 p-5 backdrop-blur-sm">
-            <div className="text-[11px] uppercase tracking-[0.28em] text-slate-500">Team Identity</div>
+          <div className="rounded-[14px] border border-[var(--color-line2)] bg-white/88 p-5 backdrop-blur-sm">
+            <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Team Identity</div>
             <div className="mt-4 space-y-4">
               <div>
-                <div className="text-sm text-slate-500">Nationality</div>
-                <div className="mt-1 text-lg font-semibold text-slate-950">{team.nationality}</div>
+                <div className="text-sm text-ink3">Nationality</div>
+                <div className="mt-1 font-display text-[22px] leading-none tracking-[0.5px] text-ink">{team.nationality}</div>
               </div>
               <div>
-                <div className="text-sm text-slate-500">Active years</div>
-                <div className="mt-1 text-lg font-semibold text-slate-950">{team.activeYears}</div>
+                <div className="text-sm text-ink3">Active years</div>
+                <div className="mt-1 font-display text-[22px] leading-none tracking-[0.5px] text-ink">{team.activeYears}</div>
               </div>
               <div>
-                <div className="text-sm text-slate-500">Status</div>
-                <div className="mt-1 text-lg font-semibold text-slate-950">{team.statusLabel}</div>
+                <div className="text-sm text-ink3">Status</div>
+                <div className="mt-1 font-display text-[22px] leading-none tracking-[0.5px] text-ink">{team.statusLabel}</div>
               </div>
               <div className="grid gap-2 pt-2">
-                <Link href="/standings" className="text-sm font-medium text-slate-700 hover:text-slate-950">
+                <Link href="/standings" className="text-sm font-medium text-ink2 hover:text-[var(--color-red)]">
                   View constructor standings
                 </Link>
-                <Link href="/results" className="text-sm font-medium text-slate-700 hover:text-slate-950">
+                <Link href="/results" className="text-sm font-medium text-ink2 hover:text-[var(--color-red)]">
                   Open results archive
                 </Link>
               </div>
@@ -267,9 +267,9 @@ export function TeamProfilePageView({
             <SectionCard title="Milestones" description="Selected constructor landmarks and defining phases.">
               <div className="space-y-3">
                 {team.milestones.map((item) => (
-                  <div key={item.label} className="rounded-[1.15rem] border border-slate-200 bg-slate-50 px-4 py-4">
-                    <div className="text-[11px] uppercase tracking-[0.24em] text-slate-400">{item.label}</div>
-                    <div className="mt-2 text-sm font-medium text-slate-800">{item.value}</div>
+                  <div key={item.label} className="rounded-[10px] border border-[var(--color-line2)] bg-[var(--color-bg)] px-4 py-4">
+                    <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">{item.label}</div>
+                    <div className="mt-2 text-sm font-medium text-ink">{item.value}</div>
                   </div>
                 ))}
               </div>
@@ -282,28 +282,28 @@ export function TeamProfilePageView({
             <LightTableShell>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-slate-200 hover:bg-transparent">
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Season</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Drivers</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Position</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Wins</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Podiums</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Poles</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Points</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Starts</TableHead>
+                  <TableRow className="border-[var(--color-line)] hover:bg-transparent">
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Season</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Drivers</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Position</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Wins</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Podiums</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Poles</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Points</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Starts</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {team.seasons.map((season) => (
-                    <TableRow key={season.season} className="border-slate-200 hover:bg-slate-50/70">
-                      <TableCell className="px-5 py-4 text-sm font-medium text-slate-900">{season.season}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{season.drivers}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{season.position}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{season.wins}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{season.podiums}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{season.poles}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{season.points}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{season.starts}</TableCell>
+                    <TableRow key={season.season} className="border-[var(--color-line)] hover:bg-[var(--color-bg)]">
+                      <TableCell className="px-5 py-4 text-sm font-medium text-ink">{season.season}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{season.drivers}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{season.position}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{season.wins}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{season.podiums}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{season.poles}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{season.points}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{season.starts}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -316,9 +316,9 @@ export function TeamProfilePageView({
           <SectionCard title="Drivers" description="Current anchors and notable names associated with the team.">
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               {team.drivers.map((driver) => (
-                <Card key={`${driver.name}-${driver.era}`} className="gap-0 rounded-[1.5rem] border-slate-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
-                  <div className="text-[11px] uppercase tracking-[0.28em] text-slate-400">{driver.era}</div>
-                  <div className="mt-4 text-xl font-semibold text-slate-950">
+                <Card key={`${driver.name}-${driver.era}`} className="gap-0 rounded-[14px] border-[var(--color-line2)] bg-white p-5">
+                  <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">{driver.era}</div>
+                  <div className="mt-4 font-display text-[24px] leading-none tracking-[1px] text-ink">
                     {getDriverHrefByName(driver.name) ? (
                       <Link href={getDriverHrefByName(driver.name)!} className="hover:underline">
                         {driver.name}
@@ -327,11 +327,11 @@ export function TeamProfilePageView({
                       driver.name
                     )}
                   </div>
-                  <div className="mt-1 text-sm text-slate-500">
+                  <div className="mt-1 text-sm text-ink3">
                     {driver.nationality}
                     {driver.number ? ` / #${driver.number}` : ""}
                   </div>
-                  <div className="mt-4 text-sm text-slate-700">{driver.highlight}</div>
+                  <div className="mt-4 text-sm text-ink2">{driver.highlight}</div>
                 </Card>
               ))}
             </div>
@@ -343,24 +343,24 @@ export function TeamProfilePageView({
             <LightTableShell>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-slate-200 hover:bg-transparent">
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Grand Prix</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Starts</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Wins</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Podiums</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Best Finish</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Points</TableHead>
+                  <TableRow className="border-[var(--color-line)] hover:bg-transparent">
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Grand Prix</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Starts</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Wins</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Podiums</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Best Finish</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Points</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {team.grandPrixBreakdown.map((row) => (
-                    <TableRow key={row.grandPrix} className="border-slate-200 hover:bg-slate-50/70">
-                      <TableCell className="px-5 py-4 text-sm font-medium text-slate-900">{row.grandPrix}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.starts}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.wins}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.podiums}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.bestFinish}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.points}</TableCell>
+                    <TableRow key={row.grandPrix} className="border-[var(--color-line)] hover:bg-[var(--color-bg)]">
+                      <TableCell className="px-5 py-4 text-sm font-medium text-ink">{row.grandPrix}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.starts}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.wins}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.podiums}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.bestFinish}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.points}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -374,22 +374,22 @@ export function TeamProfilePageView({
             <LightTableShell>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-slate-200 hover:bg-transparent">
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Grand Prix</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Poles</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Front Rows</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Lockouts</TableHead>
-                    <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-slate-500">Best Grid Avg</TableHead>
+                  <TableRow className="border-[var(--color-line)] hover:bg-transparent">
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Grand Prix</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Poles</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Front Rows</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Lockouts</TableHead>
+                    <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Best Grid Avg</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {team.qualifyingBreakdown.map((row) => (
-                    <TableRow key={row.grandPrix} className="border-slate-200 hover:bg-slate-50/70">
-                      <TableCell className="px-5 py-4 text-sm font-medium text-slate-900">{row.grandPrix}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.poles}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.frontRows}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.lockouts}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-slate-700">{row.bestGridAverage}</TableCell>
+                    <TableRow key={row.grandPrix} className="border-[var(--color-line)] hover:bg-[var(--color-bg)]">
+                      <TableCell className="px-5 py-4 text-sm font-medium text-ink">{row.grandPrix}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.poles}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.frontRows}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.lockouts}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.bestGridAverage}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -402,12 +402,12 @@ export function TeamProfilePageView({
           <SectionCard title="Records / Streaks" description="Constructor-level streaks, lockout peaks, and title rhythm.">
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
               {team.records.map((record) => (
-                <Card key={record.label} className="gap-0 rounded-[1.5rem] border-slate-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
-                  <div className="text-[11px] uppercase tracking-[0.28em] text-slate-400">{record.label}</div>
-                  <div className="mt-4 text-3xl font-semibold tracking-[-0.04em]" style={{ color: team.accent }}>
+                <Card key={record.label} className="gap-0 rounded-[14px] border-[var(--color-line2)] bg-white p-5">
+                  <div className="text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">{record.label}</div>
+                  <div className="mt-4 font-display text-[32px] leading-none tracking-[0.5px]" style={{ color: team.accent }}>
                     {record.value}
                   </div>
-                  <div className="mt-3 text-sm text-slate-500">{record.detail}</div>
+                  <div className="mt-3 text-sm text-ink3">{record.detail}</div>
                 </Card>
               ))}
             </div>

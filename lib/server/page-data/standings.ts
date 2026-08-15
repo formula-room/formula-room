@@ -2,6 +2,7 @@ import "server-only";
 
 import { asc, eq } from "drizzle-orm";
 
+import { normalizeCountryFlagKey } from "@/lib/f1/flag-country";
 import { getConstructorRouteSlug, getConstructorTheme, getDriverRouteSlug, getFlagEmoji, formatPoints } from "@/lib/f1/presentation";
 import { getDatabase } from "@/lib/db/client";
 import { constructorSeasonStandings, constructors, driverSeasonStandings, drivers, raceResults, races, sprintResults } from "@/lib/db/schema";
@@ -102,6 +103,7 @@ export async function getStandingsPageData(seasonYear: number) {
       driver: string;
       slug: string;
       flag: string;
+      flagCountry: string;
       team: string;
       teamColor: string;
       points: number;
@@ -144,6 +146,7 @@ export async function getStandingsPageData(seasonYear: number) {
       driver: fullName,
       slug: driverSlug,
       flag: getFlagEmoji(row.driverNationality),
+      flagCountry: normalizeCountryFlagKey(row.driverNationality),
       team: teamName,
       teamColor: constructorTheme.teamColor,
       points: 0,
@@ -194,6 +197,7 @@ export async function getStandingsPageData(seasonYear: number) {
       position: String(index + 1),
       driver: row.driver,
       flag: row.flag,
+      flagCountry: row.flagCountry,
       team: row.team,
       teamColor: row.teamColor,
       points: formatPoints(row.points),
@@ -230,6 +234,7 @@ export async function getStandingsPageData(seasonYear: number) {
           position: formatStandingPosition(row.position),
           driver: fullName,
           flag: getFlagEmoji(row.nationality),
+          flagCountry: normalizeCountryFlagKey(row.nationality),
           team: fallback?.constructorNames.size ? Array.from(fallback.constructorNames).join(" / ") : "Unknown Team",
           teamColor: fallback?.teamColor ?? "#ff6a3d",
           points: formatPoints(Number(row.points)),

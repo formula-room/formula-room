@@ -57,7 +57,7 @@ function FilterSelect<T extends string>({
         </SelectTrigger>
         <SelectContent className={premiumSelectContentClass}>
           {options.map((option) => (
-            <SelectItem key={option} value={option} className="focus:bg-slate-950/8 focus:text-slate-950">
+            <SelectItem key={option} value={option} className="focus:bg-[var(--color-bg)] focus:text-ink">
               {option}
             </SelectItem>
           ))}
@@ -111,7 +111,7 @@ function DriverSelect({
         </SelectTrigger>
         <SelectContent className={premiumSelectContentClass}>
           {drivers.map((driver) => (
-            <SelectItem key={driver.slug} value={driver.slug} className="focus:bg-slate-950/8 focus:text-slate-950">
+            <SelectItem key={driver.slug} value={driver.slug} className="focus:bg-[var(--color-bg)] focus:text-ink">
               {driver.name}
             </SelectItem>
           ))}

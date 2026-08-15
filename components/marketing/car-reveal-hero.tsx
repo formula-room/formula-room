@@ -67,6 +67,13 @@ export function CarRevealHero({
     [interacted, updateSpot],
   );
 
+  const carMaskStyle = {
+    maskImage: `url(${baseSrc})`,
+    WebkitMaskImage: `url(${baseSrc})`,
+    maskMode: "alpha",
+    WebkitMaskMode: "alpha",
+  } as React.CSSProperties;
+
   return (
     <section
       className={cn(
@@ -126,7 +133,8 @@ export function CarRevealHero({
                   sizes="(min-width: 1024px) 60vw, 100vw"
                   className={cn(styles.layer, styles.aeroFilter)}
                 />
-                <div className={styles.aeroTint} />
+                <div className={styles.aeroSurfaceTint} style={carMaskStyle} />
+                <div className={styles.aeroContour} style={carMaskStyle} />
                 <AeroFlowOverlay />
               </div>
             </>

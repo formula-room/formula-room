@@ -72,9 +72,6 @@ export function NewsSlide({ article }: { article: NewsArticleView }) {
         >
           {article.headline}
         </h3>
-        {article.excerpt ? (
-          <p className="line-clamp-3 text-[12px] font-light text-ink3">{article.excerpt}</p>
-        ) : null}
         <div className="flex items-center gap-2 text-[11px] text-ink3">
           <span>{relativeTime}</span>
           {article.author ? (

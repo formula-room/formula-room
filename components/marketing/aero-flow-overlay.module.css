@@ -4,8 +4,6 @@
   width: 100%;
   height: 100%;
   overflow: visible;
-  -webkit-mask-image: radial-gradient(ellipse 68% 58% at 50% 53%, #000 55%, transparent 100%);
-  mask-image: radial-gradient(ellipse 68% 58% at 50% 53%, #000 55%, transparent 100%);
 }
 
 .line {
@@ -16,18 +14,6 @@
   animation-name: flowMove;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-}
-
-.white {
-  stroke: rgba(248, 250, 252, 0.5);
-}
-
-.cyan {
-  stroke: rgba(125, 224, 235, 0.52);
-}
-
-.blue {
-  stroke: rgba(96, 165, 230, 0.46);
 }
 
 .speedA {
@@ -55,7 +41,7 @@
   fill: none;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
-  stroke: rgba(96, 165, 230, 0.4);
+  stroke: rgba(96, 165, 230, 0.22);
   transform-box: fill-box;
   transform-origin: center;
   animation:
@@ -72,10 +58,10 @@
 @keyframes vortexPulse {
   0%,
   100% {
-    opacity: 0.25;
+    opacity: 0.18;
   }
   50% {
-    opacity: 0.55;
+    opacity: 0.34;
   }
 }
 
@@ -86,6 +72,6 @@
   }
 
   .vortex {
-    opacity: 0.4;
+    opacity: 0.24;
   }
 }

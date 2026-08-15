@@ -1,7 +1,7 @@
 export default function EStorePage() {
   return (
-    <section className="flex min-h-[60vh] items-center justify-center rounded-[2rem] border border-slate-900/10 bg-white/72 px-6 py-16 shadow-[0_24px_80px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-[#0f1520]/88 dark:shadow-[0_24px_80px_rgba(0,0,0,0.3)]">
-      <h1 className="text-center text-5xl font-semibold tracking-[0.18em] text-slate-950 dark:text-white sm:text-6xl lg:text-7xl">
+    <section className="flex min-h-[60vh] items-center justify-center rounded-[16px] border border-[var(--color-line2)] bg-white px-6 py-16">
+      <h1 className="text-center font-display text-[64px] leading-[0.9] tracking-[1px] text-ink sm:text-[78px]">
         COMING SOON!
       </h1>
     </section>

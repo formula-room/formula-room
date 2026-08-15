@@ -66,7 +66,7 @@ function FoundationState({
 }) {
   return (
     <DashboardPanel className="space-y-4">
-      <Card className="rounded-[1.5rem] border-white/10 bg-white/[0.03] p-6 text-white/72">
+      <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-6 text-ink2">
         <div className="text-sm leading-7">{message}</div>
       </Card>
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -74,10 +74,10 @@ function FoundationState({
           <Link
             key={link.href}
             href={link.href}
-            className="group flex items-center justify-between rounded-[1.15rem] border border-white/8 bg-white/[0.03] px-4 py-3 transition-colors hover:border-white/14 hover:bg-white/[0.06]"
+            className="group flex items-center justify-between rounded-[10px] border border-[var(--color-line2)] bg-white px-4 py-3 transition-colors hover:border-[var(--color-line3)] hover:bg-[var(--color-bg)]"
           >
-            <span className="text-sm text-white/76 transition-colors group-hover:text-white">{link.label}</span>
-            <ArrowUpRight className="size-4 text-white/26 transition-colors group-hover:text-[#ff8b68]" />
+            <span className="text-sm text-ink2 transition-colors group-hover:text-ink">{link.label}</span>
+            <ArrowUpRight className="size-4 text-ink3 transition-colors group-hover:text-[var(--color-red)]" />
           </Link>
         ))}
       </div>
@@ -160,7 +160,7 @@ export function StatisticsDetailPageView({
 
   if (loading && !data) {
     return (
-      <Card className="rounded-[1.8rem] p-8 text-center text-white/56">
+      <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-8 text-center text-ink3">
         Loading statistic detail...
       </Card>
     );
@@ -168,7 +168,7 @@ export function StatisticsDetailPageView({
 
   if (!data) {
     return (
-      <Card className="rounded-[1.8rem] p-8 text-center text-[#ff9e84]">
+      <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-8 text-center text-[var(--color-red)]">
         {error ?? "Statistic detail is not available yet."}
       </Card>
     );
@@ -197,7 +197,7 @@ export function StatisticsDetailPageView({
                 </SelectTrigger>
                 <SelectContent className={premiumSelectContentClass}>
                   {statisticsFilterOptions.map((option) => (
-                    <SelectItem key={option} value={option} className="focus:bg-slate-950/8 focus:text-slate-950 dark:focus:bg-white/8 dark:focus:text-white">
+                    <SelectItem key={option} value={option} className="focus:bg-[var(--color-bg)] focus:text-ink">
                       {option}
                     </SelectItem>
                   ))}
@@ -208,10 +208,10 @@ export function StatisticsDetailPageView({
                 <SelectValue placeholder="Sort order" />
               </SelectTrigger>
               <SelectContent className={premiumSelectContentClass}>
-                <SelectItem value="Highest First" className="focus:bg-slate-950/8 focus:text-slate-950 dark:focus:bg-white/8 dark:focus:text-white">
+                <SelectItem value="Highest First" className="focus:bg-[var(--color-bg)] focus:text-ink">
                   Highest First
                 </SelectItem>
-                <SelectItem value="Lowest First" className="focus:bg-slate-950/8 focus:text-slate-950 dark:focus:bg-white/8 dark:focus:text-white">
+                <SelectItem value="Lowest First" className="focus:bg-[var(--color-bg)] focus:text-ink">
                   Lowest First
                 </SelectItem>
               </SelectContent>
@@ -227,13 +227,13 @@ export function StatisticsDetailPageView({
           <DataTableShell>
             <Table>
               <TableHeader>
-                <TableRow className="border-white/8 hover:bg-transparent">
-                  <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">Position</TableHead>
-                  <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">Driver</TableHead>
-                  <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">Team</TableHead>
-                  <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">{data.metricLabel}</TableHead>
-                  <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">Starts</TableHead>
-                  <TableHead className="px-5 py-4 text-[11px] uppercase tracking-[0.28em] text-white/34">{data.secondaryLabel}</TableHead>
+                <TableRow className="border-[var(--color-line)] hover:bg-transparent">
+                  <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Position</TableHead>
+                  <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Driver</TableHead>
+                  <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Team</TableHead>
+                  <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">{data.metricLabel}</TableHead>
+                  <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">Starts</TableHead>
+                  <TableHead className="px-5 py-4 text-[10px] font-medium uppercase tracking-[1.2px] text-ink3">{data.secondaryLabel}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -241,11 +241,11 @@ export function StatisticsDetailPageView({
                   const href = getDriverHref(row.slug);
 
                   return (
-                    <TableRow key={`${row.slug}-${row.primaryValue}`} className="border-white/8 hover:bg-white/[0.03]">
-                      <TableCell className="px-5 py-4 text-sm font-semibold text-white/88">{index + 1}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-white">
+                    <TableRow key={`${row.slug}-${row.primaryValue}`} className="border-[var(--color-line)] hover:bg-[var(--color-bg)]">
+                      <TableCell className="px-5 py-4 text-sm font-semibold text-ink">{index + 1}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink">
                         {href ? (
-                          <Link href={href} className="inline-flex items-center gap-2 hover:text-[#ff8b68]">
+                          <Link href={href} className="inline-flex items-center gap-2 hover:text-[var(--color-red)]">
                             <span>{row.flag}</span>
                             <span>{row.name}</span>
                           </Link>
@@ -256,10 +256,10 @@ export function StatisticsDetailPageView({
                           </span>
                         )}
                       </TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-white/58">{row.team}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-white/82">{row.primaryValue}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-white/72">{row.starts}</TableCell>
-                      <TableCell className="px-5 py-4 text-sm text-white/72">{row.secondaryValue}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.team}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink">{row.primaryValue}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.starts}</TableCell>
+                      <TableCell className="px-5 py-4 text-sm text-ink2">{row.secondaryValue}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -268,7 +268,7 @@ export function StatisticsDetailPageView({
           </DataTableShell>
         </DashboardPanel>
       ) : (
-        <Card className="rounded-[1.8rem] p-8 text-center text-white/56">
+        <Card className="rounded-[14px] border-[var(--color-line2)] bg-white p-8 text-center text-ink3">
           No ranked entries are available for this statistic yet.
         </Card>
       )}

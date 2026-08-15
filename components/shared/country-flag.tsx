@@ -355,7 +355,68 @@ function AustraliaFlag({ className }: SvgProps) {
   );
 }
 
+function ArgentinaFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="8" fill="#74ACDF" />
+      <rect y="8" width="36" height="8" fill="#F7F7F7" />
+      <rect y="16" width="36" height="8" fill="#74ACDF" />
+      <circle cx="18" cy="12" r="2.2" fill="#F6B40E" />
+    </SvgBase>
+  );
+}
+
+function DenmarkFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="24" fill="#C60C30" />
+      <rect x="10" width="3.2" height="24" fill="#F7F7F7" />
+      <rect y="10.4" width="36" height="3.2" fill="#F7F7F7" />
+    </SvgBase>
+  );
+}
+
+function FinlandFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="24" fill="#F7F7F7" />
+      <rect x="10" width="4.6" height="24" fill="#002F6C" />
+      <rect y="9.7" width="36" height="4.6" fill="#002F6C" />
+    </SvgBase>
+  );
+}
+
+function NewZealandFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="24" fill="#00247D" />
+      <rect width="16" height="12" fill="#012169" />
+      <path d="M0 0h3.2L16 8.5V12h-3.2L0 3.5ZM16 0h-3.2L0 8.5V12h3.2L16 3.5Z" fill="#F7F7F7" />
+      <path d="M6.4 0h3.2v12H6.4Z" fill="#F7F7F7" />
+      <path d="M0 4.4h16v3.2H0Z" fill="#F7F7F7" />
+      <path d="M7 0h2v12H7Z" fill="#C8102E" />
+      <path d="M0 5h16v2H0Z" fill="#C8102E" />
+      <circle cx="25" cy="7" r="1.7" fill="#CC142B" stroke="#F7F7F7" strokeWidth="0.7" />
+      <circle cx="30" cy="11" r="1.5" fill="#CC142B" stroke="#F7F7F7" strokeWidth="0.7" />
+      <circle cx="24" cy="16" r="1.5" fill="#CC142B" stroke="#F7F7F7" strokeWidth="0.7" />
+      <circle cx="30.5" cy="18" r="1.3" fill="#CC142B" stroke="#F7F7F7" strokeWidth="0.7" />
+    </SvgBase>
+  );
+}
+
+function ThailandFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="24" fill="#A51931" />
+      <rect y="4" width="36" height="4" fill="#F7F7F7" />
+      <rect y="8" width="36" height="8" fill="#2D2A4A" />
+      <rect y="16" width="36" height="4" fill="#F7F7F7" />
+    </SvgBase>
+  );
+}
+
 const flagComponents: Record<string, React.ComponentType<SvgProps>> = {
+  Argentina: ArgentinaFlag,
   Australia: AustraliaFlag,
   Austria: AustriaFlag,
   Azerbaijan: AzerbaijanFlag,
@@ -364,6 +425,8 @@ const flagComponents: Record<string, React.ComponentType<SvgProps>> = {
   Brazil: BrazilFlag,
   Canada: CanadaFlag,
   China: ChinaFlag,
+  Denmark: DenmarkFlag,
+  Finland: FinlandFlag,
   France: FranceFlag,
   Germany: GermanyFlag,
   Hungary: HungaryFlag,
@@ -374,6 +437,7 @@ const flagComponents: Record<string, React.ComponentType<SvgProps>> = {
   Mexico: MexicoFlag,
   Monaco: MonacoFlag,
   Netherlands: NetherlandsFlag,
+  "New Zealand": NewZealandFlag,
   Poland: PolandFlag,
   Portugal: PortugalFlag,
   Qatar: QatarFlag,
@@ -381,6 +445,7 @@ const flagComponents: Record<string, React.ComponentType<SvgProps>> = {
   "Saudi Arabia": SaudiFlag,
   Singapore: SingaporeFlag,
   Spain: SpainFlag,
+  Thailand: ThailandFlag,
   Turkey: TurkeyFlag,
   "Abu Dhabi": AbuDhabiFlag,
   "United Arab Emirates": AbuDhabiFlag,

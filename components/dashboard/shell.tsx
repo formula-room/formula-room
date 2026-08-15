@@ -6,8 +6,9 @@ import Image from "next/image";
 import { Menu } from "lucide-react";
 
 import { Footer } from "@/components/footer";
-import { ThemeToggle } from "@/components/dashboard/theme-toggle";
+import { InstagramIcon, ThreadsIcon, XIcon } from "@/components/icons/SocialIcons";
 import { cn } from "@/lib/utils";
+import { socialLinks, type SocialLinkId } from "@/config/social";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -22,13 +23,8 @@ type DashboardShellProps = {
 };
 
 const mainNavItems = [
+  { title: "News", href: "/news", matches: ["/news"] },
   { title: "Calendar", href: "/calendar", matches: ["/calendar"] },
-  {
-    title: "Weekend Schedule",
-    href: "/event",
-    matches: ["/event"],
-  },
-  { title: "Results", href: "/results", matches: ["/results"] },
   { title: "Standings", href: "/standings", matches: ["/standings", "/driver", "/team"] },
   { title: "Statistics", href: "/statistics", matches: ["/statistics"] },
   { title: "Grand Prix", href: "/grand-prix", matches: ["/grand-prix", "/circuit"] },
@@ -36,24 +32,35 @@ const mainNavItems = [
   { title: "eStore", href: "/estore", matches: ["/estore"] },
 ];
 
+const socialHoverClass: Record<SocialLinkId, string> = {
+  instagram: "hover:text-[#E1306C]",
+  x: "hover:text-[#F8FAFC]",
+  threads: "hover:text-[#F8FAFC]",
+};
+
+const socialIcons: Record<SocialLinkId, React.ReactNode> = {
+  instagram: <InstagramIcon className="h-4 w-4" />,
+  x: <XIcon className="h-4 w-4" />,
+  threads: <ThreadsIcon className="h-4 w-4" />,
+};
+
 function LogoLockup() {
   return (
     <Link
       href="/"
-      className="flex items-center gap-2.5 text-white"
+      className="flex translate-x-3 items-center gap-2.5 text-white"
       aria-label="Formula Room home"
     >
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[7px] bg-white/10">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center">
         <Image
-          src="/brand-logo.png"
+          src="/images/FR logo.png"
           alt=""
-          width={20}
-          height={20}
-          className="h-5 w-5 object-contain"
+          width={28}
+          height={28}
+          className="h-7 w-7 object-contain"
           priority
         />
       </span>
-      <span className="font-display text-[18px] uppercase tracking-[3px] text-white">Formula Room</span>
     </Link>
   );
 }
@@ -88,19 +95,39 @@ function NavItems({ mobile = false }: { mobile?: boolean }) {
   );
 }
 
+function HeaderSocialLinks() {
+  return (
+    <div className="hidden items-center gap-5 min-[1180px]:flex">
+      {socialLinks.map((link) => (
+        <a
+          key={link.href}
+          href={link.href}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={link.label}
+          title={link.label}
+          className={`flex items-center justify-center text-[rgba(255,255,255,0.74)] transition-colors ${socialHoverClass[link.id]}`}
+        >
+          {socialIcons[link.id]}
+        </a>
+      ))}
+    </div>
+  );
+}
+
 export function DashboardShell({ children }: DashboardShellProps) {
   return (
     <div className="min-h-screen bg-bg text-ink">
-      <header className="sticky top-0 z-[300] h-[60px] border-b border-[rgba(255,255,255,0.08)] bg-[#17140F] backdrop-blur-xl" style={{ backgroundColor: "#17140F" }}>
-        <div className="mx-auto flex h-[60px] max-w-[1440px] items-center justify-between gap-4 px-5 lg:px-10">
+      <header className="sticky top-0 z-[300] h-[60px] border-b border-[rgba(255,255,255,0.08)] bg-[#1d1d1d] backdrop-blur-xl" style={{ backgroundColor: "#1d1d1d" }}>
+        <div className="mx-auto grid h-[60px] max-w-[1440px] grid-cols-[auto_1fr_auto] items-center gap-4 pl-2 pr-5 lg:pl-4 lg:pr-10">
           <LogoLockup />
 
-          <div className="hidden min-[1180px]:block">
+          <div className="hidden translate-x-12 justify-self-center min-[1180px]:block">
             <NavItems />
           </div>
 
-          <div className="flex items-center gap-2 min-[1180px]:min-w-[70px] min-[1180px]:justify-end">
-            <ThemeToggle />
+          <div className="flex items-center gap-5 justify-self-end min-[1180px]:min-w-[140px] min-[1180px]:justify-end">
+            <HeaderSocialLinks />
             <Sheet>
               <SheetTrigger asChild>
                 <Button
