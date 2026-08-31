@@ -106,6 +106,8 @@ const countryAliases: Record<string, string> = {
 
 const raceFlagOverrides: Record<string, string> = {
   "Abu Dhabi Grand Prix": "United Arab Emirates",
+  "Bahrain Grand Prix": "Bahrain",
+  "Bahrain Grand Prix in Malaysia": "Bahrain",
   "British Grand Prix": "United Kingdom",
   "Las Vegas Grand Prix": "United States",
   "Mexico City Grand Prix": "Mexico",
