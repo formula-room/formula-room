@@ -12,6 +12,21 @@ export const ThreadsIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+export const LinkedInIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <mask id="linkedin-mark-cutout">
+      <rect width="24" height="24" fill="white" />
+      <rect x="6.6" y="9.7" width="2.4" height="7.6" rx="0.35" fill="black" />
+      <circle cx="7.8" cy="6.8" r="1.35" fill="black" />
+      <path
+        d="M11.6 9.7h2.25v1.1c.6-.8 1.45-1.3 2.55-1.3 1.9 0 3.2 1.3 3.2 3.7v4.1h-2.35v-3.6c0-1.1-.55-1.75-1.5-1.75s-1.7.7-1.7 1.8v3.55H11.6V9.7z"
+        fill="black"
+      />
+    </mask>
+    <rect width="20" height="20" x="2" y="2" rx="5" fill="currentColor" mask="url(#linkedin-mark-cutout)" />
+  </svg>
+);
+
 export const XIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />

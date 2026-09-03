@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Menu } from "lucide-react";
 
 import { Footer } from "@/components/footer";
-import { InstagramIcon, ThreadsIcon, XIcon } from "@/components/icons/SocialIcons";
+import { InstagramIcon, LinkedInIcon, ThreadsIcon, XIcon } from "@/components/icons/SocialIcons";
 import { cn } from "@/lib/utils";
 import { socialLinks, type SocialLinkId } from "@/config/social";
 import { Button } from "@/components/ui/button";
@@ -27,8 +27,7 @@ const mainNavItems = [
   { title: "Calendar", href: "/calendar", matches: ["/calendar"] },
   { title: "Standings", href: "/standings", matches: ["/standings", "/driver", "/team"] },
   { title: "Statistics", href: "/statistics", matches: ["/statistics"] },
-  { title: "Grand Prix", href: "/grand-prix", matches: ["/grand-prix", "/circuit"] },
-  { title: "Head-to-Head", href: "/head-to-head", matches: ["/head-to-head"] },
+  { title: "Wallpapers", href: "/wallpapers", matches: ["/wallpapers"] },
   { title: "eStore", href: "/estore", matches: ["/estore"] },
 ];
 
@@ -36,12 +35,14 @@ const socialHoverClass: Record<SocialLinkId, string> = {
   instagram: "hover:text-[#E1306C]",
   x: "hover:text-[#F8FAFC]",
   threads: "hover:text-[#F8FAFC]",
+  linkedin: "hover:text-[#F8FAFC]",
 };
 
 const socialIcons: Record<SocialLinkId, React.ReactNode> = {
   instagram: <InstagramIcon className="h-4 w-4" />,
   x: <XIcon className="h-4 w-4" />,
   threads: <ThreadsIcon className="h-4 w-4" />,
+  linkedin: <LinkedInIcon className="h-4 w-4" />,
 };
 
 function LogoLockup() {

@@ -14,6 +14,11 @@ export const socialLinks = [
     label: "Follow Formula Room on Threads",
     href: "https://www.threads.net/@formula.room",
   },
+  {
+    id: "linkedin",
+    label: "Follow Formula Room on LinkedIn",
+    href: "https://www.linkedin.com/company/formularoom/",
+  },
 ] as const;
 
 export type SocialLinkId = (typeof socialLinks)[number]["id"];
