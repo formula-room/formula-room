@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { DashCard, PosBadge, TeamStripe } from "@/components/dashboard/page-primitives";
+import { DashCard } from "@/components/dashboard/page-primitives";
 import { SectionTabs, tabButtonId, tabPanelId } from "@/components/home/section-tabs";
+import { StatPill } from "@/components/home/stat-pill";
 
 type StandingsEntry = {
   position: string;
@@ -23,38 +24,22 @@ type StandingsTabsCardProps = {
 const ID_PREFIX = "home-standings";
 
 function StandingsRows({ entries }: { entries: StandingsEntry[] }) {
-  const leaderPoints = Math.max(...entries.map((entry) => entry.points), 1);
-
   if (!entries.length) {
     return <p className="px-6 py-6 text-[13px] text-ink3">Standings data is unavailable.</p>;
   }
 
   return (
-    <div>
-      {entries.map((entry) => {
-        const pos = Number.parseInt(entry.position, 10) || 0;
-        const width = leaderPoints > 0 ? Math.min((entry.points / leaderPoints) * 100, 100) : 0;
-        const row = (
-          <div className="flex items-center gap-3 border-b border-[var(--color-line)] px-6 py-3.5 transition-colors last:border-b-0 hover:bg-[var(--color-bg)]">
-            <PosBadge pos={pos} />
-            <TeamStripe teamColor={entry.accentColor} />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-[13px] font-medium text-ink">{entry.name}</p>
-              <div className="mt-1.5 h-[4px] w-full max-w-[160px] overflow-hidden rounded-[2px] bg-[var(--color-bg3)]">
-                <div className="h-full rounded-[2px]" style={{ width: `${width}%`, backgroundColor: entry.accentColor }} />
-              </div>
-            </div>
-            <span className="flex-shrink-0 text-[14px] font-semibold tabular-nums text-ink">{entry.points}</span>
-          </div>
-        );
-        return entry.href ? (
-          <Link key={`${entry.position}-${entry.name}`} href={entry.href}>
-            {row}
-          </Link>
-        ) : (
-          <div key={`${entry.position}-${entry.name}`}>{row}</div>
-        );
-      })}
+    <div className="flex flex-col gap-2 py-5 pl-6 pr-16">
+      {entries.map((entry) => (
+        <StatPill
+          key={`${entry.position}-${entry.name}`}
+          pos={Number.parseInt(entry.position, 10) || 0}
+          name={entry.name}
+          value={entry.points}
+          accentColor={entry.accentColor}
+          href={entry.href}
+        />
+      ))}
     </div>
   );
 }
