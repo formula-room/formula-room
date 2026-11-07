@@ -305,15 +305,6 @@
   }
 }
 
-@keyframes barGrow {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -477,5 +468,91 @@
   --color-line: rgba(247, 247, 248, 0.07);
   --color-line2: rgba(247, 247, 248, 0.11);
   --color-line3: rgba(247, 247, 248, 0.2);
+  --color-gold: #d9b45b;
+  --color-silver: #c6c8cc;
+  --color-bronze: #cf9360;
 }
 
+/* Homepage podium accents: gold and bronze need to read as different medals. */
+.home-graphite-scope {
+  --color-gold: #946f00;
+  --color-silver: #5f6368;
+  --color-bronze: #9c5426;
+}
+
+/* Shared elevation for top-level homepage cards. */
+.home-card {
+  box-shadow:
+    0 1px 2px rgba(23, 20, 15, 0.04),
+    0 8px 24px rgba(23, 20, 15, 0.05);
+}
+
+.dark .home-card {
+  box-shadow: none;
+}
+
+
+/* Homepage race cards (Last Race, Championship Standings) */
+.race-strip {
+  background: linear-gradient(90deg, #ecebe7 0%, #faf9f7 45%, #f4f3ef 100%);
+  box-shadow: 0 2px 5px rgba(23, 20, 15, 0.14);
+}
+
+.race-strip-tint {
+  background: linear-gradient(90deg, rgba(23, 20, 15, 0) 0%, rgba(23, 20, 15, 0.07) 100%);
+}
+
+.race-black {
+  background: #111214;
+  color: #ffffff;
+}
+
+.race-medal-1 {
+  background: linear-gradient(135deg, #f0cf4f 0%, #b98c10 100%);
+  color: #241a00;
+}
+
+.race-medal-2 {
+  background: linear-gradient(135deg, #bfc2c6 0%, #6e7176 100%);
+  color: #ffffff;
+}
+
+.race-medal-3 {
+  background: linear-gradient(135deg, #c98a52 0%, #7f4b20 100%);
+  color: #ffffff;
+}
+
+/* Literal white: text-white follows --color-white, which is dark in the dark theme. */
+.race-selected {
+  background: var(--color-red);
+  color: #ffffff;
+}
+
+.race-status {
+  background: #dedcd6;
+  color: #55524c;
+}
+
+.race-status-dsq {
+  background: var(--color-red);
+  color: #ffffff;
+}
+
+.dark .race-status {
+  background: #36373c;
+  color: #c9cace;
+}
+
+.dark .race-strip {
+  background: linear-gradient(90deg, #2a2b2f 0%, #1f2023 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.dark .race-strip-tint {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.07) 100%);
+}
+
+.dark .race-black {
+  background: #000000;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}

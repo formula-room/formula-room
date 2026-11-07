@@ -6,6 +6,7 @@ import { CountryFlag } from "@/components/shared/country-flag";
 
 type CountdownPanelProps = {
   available: boolean;
+  round: string;
   flagCountry: string;
   title: string;
   location: string;
@@ -27,14 +28,18 @@ function resolveTarget(raceStartUtc: string | undefined, fallbackDate: string) {
   return Number.isNaN(fallback) ? null : fallback;
 }
 
-const DIGIT_CLASS = "block font-display text-[52px] leading-none tracking-[1px] text-[#f8fafc] sm:text-[68px] lg:text-[84px]";
+const COUNTDOWN_SIZE = "text-[48px] min-[360px]:text-[56px] sm:text-[88px] lg:text-[116px]";
 
 function RollingDigits({ value }: { value: string }) {
   return (
     <span className="inline-flex">
       {value.split("").map((char, index) => (
-        <span key={index} className="relative inline-block h-[52px] overflow-hidden sm:h-[68px] lg:h-[84px]">
-          <span key={char} className={`${DIGIT_CLASS} animate-roll-digit`}>
+        // Fixed-width cells stop the digits shifting sideways as the seconds tick.
+        <span
+          key={index}
+          className={`relative inline-block h-[1em] w-[0.44em] overflow-hidden text-center font-display leading-none text-[#f8fafc] ${COUNTDOWN_SIZE}`}
+        >
+          <span key={char} className="block animate-roll-digit">
             {char}
           </span>
         </span>
@@ -57,7 +62,7 @@ function getTime(target: number | null) {
   };
 }
 
-export function CountdownPanel({ available, flagCountry, title, location, date, raceStartUtc, dateRange, isLive }: CountdownPanelProps) {
+export function CountdownPanel({ available, round, flagCountry, title, location, date, raceStartUtc, dateRange, isLive }: CountdownPanelProps) {
   const target = useMemo(
     () => (available ? resolveTarget(raceStartUtc, date) : null),
     [available, raceStartUtc, date],
@@ -75,7 +80,7 @@ export function CountdownPanel({ available, flagCountry, title, location, date, 
     <section className="relative overflow-hidden rounded-t-[14px] bg-[#1d1d1d]">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--color-red)] to-transparent" />
 
-      <div className="flex flex-col items-center justify-center gap-8 px-6 py-10 text-center sm:px-9 sm:py-12 lg:min-h-[320px] lg:py-14">
+      <div className="flex flex-col items-center justify-center gap-7 px-4 py-9 text-center sm:gap-8 sm:px-9 sm:py-11 lg:py-12">
         {isLive ? (
           <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[1px] text-[var(--color-red)]">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-red)] animate-pulse" />
@@ -85,10 +90,13 @@ export function CountdownPanel({ available, flagCountry, title, location, date, 
 
         {available ? (
           <div>
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[2px] text-[rgba(248,250,252,0.62)]">
+              Next Race · Round {round}
+            </p>
             <h2 className="font-display text-[38px] uppercase leading-none tracking-[1px] text-[#f8fafc] sm:text-[48px] lg:text-[56px]">
               {title}
             </h2>
-            <div className="mt-3 flex items-center justify-center gap-2 text-[13px] text-[rgba(248,250,252,0.5)] sm:text-[14px]">
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-[13px] text-[rgba(248,250,252,0.7)] sm:text-[14px]">
               {flagCountry ? <CountryFlag country={flagCountry} className="h-4 w-6 rounded-[3px]" /> : null}
               <span>
                 {location} · {dateRange}
@@ -100,22 +108,22 @@ export function CountdownPanel({ available, flagCountry, title, location, date, 
         )}
 
         {available ? (
-          <div className="flex items-end justify-center">
+          <div className="flex items-start justify-center">
             {[
               { val: time.d, label: "Days" },
               { val: time.h, label: "Hours" },
               { val: time.m, label: "Mins" },
               { val: time.s, label: "Secs" },
             ].map((unit, index) => (
-              <div key={unit.label} className="flex items-end">
+              <div key={unit.label} className="flex items-start">
                 {index > 0 ? (
-                  <span className="translate-y-[-0.5em] px-2 font-display text-[46px] leading-none text-[var(--color-red)] opacity-60 sm:text-[64px] lg:text-[76px]">
+                  <span className={`px-1 font-display leading-none text-[var(--color-red)] opacity-80 sm:px-3 lg:px-4 ${COUNTDOWN_SIZE}`}>
                     :
                   </span>
                 ) : null}
                 <div className="text-center">
                   <RollingDigits value={String(unit.val).padStart(2, "0")} />
-                  <span className="mt-2 block text-[10px] font-medium uppercase tracking-[1px] text-[rgba(248,250,252,0.42)] sm:text-[11px]">
+                  <span className="mt-2.5 block text-[10px] font-medium uppercase tracking-[1.6px] text-[rgba(248,250,252,0.62)] sm:text-[11px] lg:text-[12px]">
                     {unit.label}
                   </span>
                 </div>

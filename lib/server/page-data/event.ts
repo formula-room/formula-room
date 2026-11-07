@@ -14,6 +14,8 @@ import {
   sprintResults,
 } from "@/lib/db/schema";
 import { resolveRaceFlagCountry } from "@/lib/f1/flag-country";
+import { fetchRaceLaps } from "@/lib/f1/jolpica-client";
+import { formatPoints, getTeamColor } from "@/lib/f1/presentation";
 import { deriveRaceStatus } from "@/lib/server/page-data/calendar";
 
 type EventLookupInput = {
@@ -37,25 +39,37 @@ function formatDateRange(value: string) {
   return `${formatter.format(friday)} - ${formatter.format(raceDate)}`;
 }
 
-function getCountryFlag(country: string) {
-  const flags: Record<string, string> = {
-    Australia: "AU",
-    Bahrain: "BH",
-    China: "CN",
-    Italy: "IT",
-    Japan: "JP",
-    Monaco: "MC",
-    "Saudi Arabia": "SA",
-    "United States": "US",
-    "United Kingdom": "GB",
-  };
+const completedRaceLaps = new Map<number, Map<string, string>>();
 
-  const code = flags[country];
-  if (!code) {
-    return "F1";
+/** race_results has no laps column, so these come from Jolpica. Results still show if it fails. */
+async function getRaceLaps(raceId: number, seasonYear: number, round: number, isCompleted: boolean) {
+  const cached = completedRaceLaps.get(raceId);
+  if (cached) {
+    return cached;
   }
 
-  return String.fromCodePoint(...code.toUpperCase().split("").map((char) => 127397 + char.charCodeAt(0)));
+  try {
+    const laps = await fetchRaceLaps(seasonYear, round);
+    if (isCompleted && laps.size > 0) {
+      completedRaceLaps.set(raceId, laps);
+    }
+    return laps;
+  } catch {
+    return new Map<string, string>();
+  }
+}
+
+function formatFinish(position: number | null, positionText: string) {
+  if (/^\d+$/.test(positionText)) {
+    return `P${positionText}`;
+  }
+
+  return positionText || (position ? `P${position}` : "--");
+}
+
+function formatResultPoints(value: string) {
+  const points = Number(value);
+  return `${formatPoints(points)} ${points === 1 ? "pt" : "pts"}`;
 }
 
 function formatRaceDay(value: string) {
@@ -205,9 +219,12 @@ export async function getEventPageData(input: EventLookupInput) {
   const [raceRows, qualifyingRows, sprintRows] = await Promise.all([
     db
       .select({
+        driverId: raceResults.driverId,
         position: raceResults.position,
+        positionText: raceResults.positionText,
         givenName: drivers.givenName,
         familyName: drivers.familyName,
+        constructorId: raceResults.constructorId,
         team: constructors.name,
         value: raceResults.points,
       })
@@ -221,6 +238,7 @@ export async function getEventPageData(input: EventLookupInput) {
         position: qualifyingResults.position,
         givenName: drivers.givenName,
         familyName: drivers.familyName,
+        constructorId: qualifyingResults.constructorId,
         team: constructors.name,
         q1: qualifyingResults.q1,
         q2: qualifyingResults.q2,
@@ -234,8 +252,11 @@ export async function getEventPageData(input: EventLookupInput) {
     db
       .select({
         position: sprintResults.position,
+        positionText: sprintResults.positionText,
+        laps: sprintResults.laps,
         givenName: drivers.givenName,
         familyName: drivers.familyName,
+        constructorId: sprintResults.constructorId,
         team: constructors.name,
         value: sprintResults.points,
       })
@@ -247,15 +268,18 @@ export async function getEventPageData(input: EventLookupInput) {
   ]);
 
   const hasQualifying = qualifyingRows.length > 0;
-  const [status, storedSchedule] = await Promise.all([
-    Promise.resolve(deriveRaceStatus(race.date)),
+  const status = deriveRaceStatus(race.date);
+  const [storedSchedule, raceLaps] = await Promise.all([
     getStoredSchedule(race.raceId, race.date, hasQualifying),
+    raceRows.length > 0
+      ? getRaceLaps(race.raceId, race.seasonYear, race.round, status === "Completed")
+      : new Map<string, string>(),
   ]);
 
   return {
     slug: race.slug,
     grandPrix: race.name,
-    flag: getCountryFlag(resolveRaceFlagCountry(race.name, race.country)),
+    flagCountry: resolveRaceFlagCountry(race.name, race.country),
     circuitId: race.circuitId,
     circuit: race.circuitName,
     country: race.country,
@@ -269,31 +293,36 @@ export async function getEventPageData(input: EventLookupInput) {
       {
         key: "qualifying",
         label: "Qualifying",
-        rows: qualifyingRows.slice(0, 3).map((row) => ({
+        rows: qualifyingRows.map((row) => ({
           position: row.position ? `P${row.position}` : "--",
           entry: `${row.givenName} ${row.familyName}`,
           team: row.team,
-          value: row.q3 ?? row.q2 ?? row.q1 ?? "--",
+          teamColor: getTeamColor(row.constructorId, row.team),
+          value: row.q3 || row.q2 || row.q1 || "--",
         })),
       },
       {
         key: "race",
         label: "Race",
-        rows: raceRows.slice(0, 3).map((row) => ({
-          position: row.position ? `P${row.position}` : "--",
+        rows: raceRows.map((row) => ({
+          position: formatFinish(row.position, row.positionText),
           entry: `${row.givenName} ${row.familyName}`,
           team: row.team,
-          value: row.value ? `${row.value} pts` : "--",
+          teamColor: getTeamColor(row.constructorId, row.team),
+          laps: raceLaps.get(row.driverId),
+          value: formatResultPoints(row.value),
         })),
       },
       {
         key: "sprint",
         label: "Sprint",
-        rows: sprintRows.slice(0, 3).map((row) => ({
-          position: row.position ? `P${row.position}` : "--",
+        rows: sprintRows.map((row) => ({
+          position: formatFinish(row.position, row.positionText),
           entry: `${row.givenName} ${row.familyName}`,
           team: row.team,
-          value: row.value ? `${row.value} pts` : "--",
+          teamColor: getTeamColor(row.constructorId, row.team),
+          laps: row.laps !== null ? String(row.laps) : undefined,
+          value: formatResultPoints(row.value),
         })),
       },
     ].filter((tab) => tab.rows.length > 0),

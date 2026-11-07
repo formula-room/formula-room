@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, eq, gte, lt, lte } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lt } from "drizzle-orm";
 
 import { getDatabase } from "@/lib/db/client";
 import { getLatestNews } from "@/lib/db/news";
@@ -11,18 +11,17 @@ import {
   raceResults,
   raceSessions,
   races,
-  sprintResults,
 } from "@/lib/db/schema";
 import type { NewsArticleView } from "@/components/news/NewsSlide";
 import {
-  getConstructorRouteSlug,
-  getConstructorTheme,
-  getDriverRouteSlug,
+  getTeamColor,
   formatPoints,
 } from "@/lib/f1/presentation";
 import { resolveRaceFlagCountry } from "@/lib/f1/flag-country";
 import { getCircuitRouteSlug } from "@/lib/f1/presentation";
 import circuitFeatures from "@/lib/data/f1-circuits.json";
+import { getEventRaceResultsHref } from "@/lib/route-helpers";
+import { getStandingsPageData } from "@/lib/server/page-data/standings";
 import { getSeasonsList } from "@/lib/server/queries/seasons";
 
 type HomeSessionItem = {
@@ -310,22 +309,6 @@ async function getRaceByDateBoundary(direction: "next" | "last") {
   return rows[0] ?? null;
 }
 
-async function getLatestResultRound(seasonYear: number) {
-  const { db } = getDatabase();
-
-  const [row] = await db
-    .select({
-      round: races.round,
-    })
-    .from(races)
-    .innerJoin(raceResults, eq(raceResults.raceId, races.raceId))
-    .where(eq(races.seasonYear, seasonYear))
-    .orderBy(desc(races.date), desc(races.round))
-    .limit(1);
-
-  return row?.round;
-}
-
 async function getPodiumForRace(raceId: number) {
   const { db } = getDatabase();
 
@@ -334,6 +317,7 @@ async function getPodiumForRace(raceId: number) {
       position: raceResults.position,
       givenName: drivers.givenName,
       familyName: drivers.familyName,
+      constructorId: raceResults.constructorId,
       constructorName: constructors.name,
       points: raceResults.points,
     })
@@ -344,155 +328,27 @@ async function getPodiumForRace(raceId: number) {
     .orderBy(asc(raceResults.position));
 }
 
-async function getTopStandingsForSeason(seasonYear: number, throughRound?: number) {
-  const { db } = getDatabase();
-  const seasonFilter =
-    throughRound && throughRound > 0
-      ? and(eq(races.seasonYear, seasonYear), lte(races.round, throughRound))
-      : eq(races.seasonYear, seasonYear);
+/** The top of the same championship table Full Standings shows, so the two can't disagree. */
+async function getTopStandingsForSeason(seasonYear: number) {
+  const { drivers: driverRows, teams: teamRows } = await getStandingsPageData(seasonYear);
 
-  const raceRows = await db
-    .select({
-      round: races.round,
-      driverId: drivers.driverId,
-      givenName: drivers.givenName,
-      familyName: drivers.familyName,
-      constructorId: constructors.constructorId,
-      constructorName: constructors.name,
-      position: raceResults.position,
-      points: raceResults.points,
-    })
-    .from(raceResults)
-    .innerJoin(races, eq(raceResults.raceId, races.raceId))
-    .innerJoin(drivers, eq(raceResults.driverId, drivers.driverId))
-    .innerJoin(constructors, eq(raceResults.constructorId, constructors.constructorId))
-    .where(seasonFilter)
-    .orderBy(asc(races.round), asc(drivers.familyName));
-
-  const sprintRows = await db
-    .select({
-      round: races.round,
-      driverId: drivers.driverId,
-      givenName: drivers.givenName,
-      familyName: drivers.familyName,
-      constructorId: constructors.constructorId,
-      constructorName: constructors.name,
-      position: sprintResults.position,
-      points: sprintResults.points,
-    })
-    .from(sprintResults)
-    .innerJoin(races, eq(sprintResults.raceId, races.raceId))
-    .innerJoin(drivers, eq(sprintResults.driverId, drivers.driverId))
-    .innerJoin(constructors, eq(sprintResults.constructorId, constructors.constructorId))
-    .where(seasonFilter)
-    .orderBy(asc(races.round), asc(drivers.familyName));
-
-  const driverMap = new Map<
-    string,
-    {
-      driver: string;
-      slug: string;
-      team: string;
-      teamColor: string;
-      points: number;
-      wins: number;
-      podiums: number;
-      latestRound: number;
-      sortFamilyName: string;
-    }
-  >();
-  const teamMap = new Map<
-    string,
-    {
-      team: string;
-      slug: string;
-      teamColor: string;
-      points: number;
-      wins: number;
-      podiums: number;
-    }
-  >();
-
-  for (const row of [...raceRows, ...sprintRows]) {
-    const fullName = `${row.givenName} ${row.familyName}`;
-    const constructorTheme = getConstructorTheme(row.constructorId, row.constructorName);
-
-    const driverStanding = driverMap.get(row.driverId) ?? {
-      driver: fullName,
-      slug: getDriverRouteSlug(row.driverId, fullName),
-      team: constructorTheme.displayName,
-      teamColor: constructorTheme.teamColor,
-      points: 0,
-      wins: 0,
-      podiums: 0,
-      latestRound: row.round,
-      sortFamilyName: row.familyName,
-    };
-
-    driverStanding.points += Number(row.points);
-    driverStanding.wins += raceRows.includes(row) && row.position === 1 ? 1 : 0;
-    driverStanding.podiums += row.position !== null && row.position <= 3 ? 1 : 0;
-
-    if (row.round >= driverStanding.latestRound) {
-      driverStanding.team = constructorTheme.displayName;
-      driverStanding.teamColor = constructorTheme.teamColor;
-      driverStanding.latestRound = row.round;
-    }
-
-    driverMap.set(row.driverId, driverStanding);
-
-    const teamStanding = teamMap.get(row.constructorId) ?? {
-      team: constructorTheme.displayName,
-      slug: getConstructorRouteSlug(row.constructorId, constructorTheme.displayName),
-      teamColor: constructorTheme.accent,
-      points: 0,
-      wins: 0,
-      podiums: 0,
-    };
-
-    teamStanding.points += Number(row.points);
-    teamStanding.wins += raceRows.includes(row) && row.position === 1 ? 1 : 0;
-    teamStanding.podiums += row.position !== null && row.position <= 3 ? 1 : 0;
-    teamMap.set(row.constructorId, teamStanding);
-  }
-
-  const topDrivers = Array.from(driverMap.values())
-    .sort((left, right) => {
-      if (right.points !== left.points) return right.points - left.points;
-      if (right.wins !== left.wins) return right.wins - left.wins;
-      if (right.podiums !== left.podiums) return right.podiums - left.podiums;
-      return left.sortFamilyName.localeCompare(right.sortFamilyName);
-    })
-    .slice(0, 3)
-    .map((row, index) => ({
-      position: String(index + 1).padStart(2, "0"),
+  return {
+    topDrivers: driverRows.slice(0, 3).map((row) => ({
+      position: row.position.padStart(2, "0"),
       name: row.driver,
-      points: Number(formatPoints(row.points)),
+      points: Number(row.points),
       sublabel: row.team,
       href: `/driver/${row.slug}`,
       accentColor: row.teamColor,
-    }));
-
-  const topTeams = Array.from(teamMap.values())
-    .sort((left, right) => {
-      if (right.points !== left.points) return right.points - left.points;
-      if (right.wins !== left.wins) return right.wins - left.wins;
-      if (right.podiums !== left.podiums) return right.podiums - left.podiums;
-      return left.team.localeCompare(right.team);
-    })
-    .slice(0, 3)
-    .map((row, index) => ({
-      position: String(index + 1).padStart(2, "0"),
+    })),
+    topTeams: teamRows.slice(0, 3).map((row) => ({
+      position: row.position.padStart(2, "0"),
       name: row.team,
-      points: Number(formatPoints(row.points)),
+      points: Number(row.points),
       sublabel: `${row.wins} wins`,
       href: `/team/${row.slug}`,
       accentColor: row.teamColor,
-    }));
-
-  return {
-    topDrivers,
-    topTeams,
+    })),
   };
 }
 
@@ -528,14 +384,9 @@ export async function getHomePageData() {
     lastRace ? getCircuitOverview(lastRace.circuitId, lastRace.circuitName, lastRace.locality) : Promise.resolve(buildUnavailableRaceCard("", "").overview),
     nextRace ? getRaceSessions(nextRace.raceId, nextRace.date) : Promise.resolve([]),
   ]);
-  const latestResultRound =
-    latestSeason !== null ? await getLatestResultRound(latestSeason) : undefined;
   const standings =
     latestSeason !== null
-      ? await getTopStandingsForSeason(
-          latestSeason,
-          latestResultRound,
-        )
+      ? await getTopStandingsForSeason(latestSeason)
       : {
           topDrivers: [buildUnavailableStandingsEntry("01"), buildUnavailableStandingsEntry("02"), buildUnavailableStandingsEntry("03")],
           topTeams: [buildUnavailableStandingsEntry("01"), buildUnavailableStandingsEntry("02"), buildUnavailableStandingsEntry("03")],
@@ -567,7 +418,7 @@ export async function getHomePageData() {
         location: `${lastRace.locality}, ${lastRace.country}`,
         circuitId: lastRace.circuitId,
         circuitName: lastRace.circuitName,
-        eventHref: `/event/${lastRace.slug}`,
+        eventHref: getEventRaceResultsHref(lastRace.slug, lastRace.seasonYear, lastRace.round),
         circuitHref: `/circuit/${getCircuitRouteSlug(lastRace.circuitId, lastRace.circuitName)}`,
         round: String(lastRace.round).padStart(2, "0"),
         title: lastRace.name,
@@ -579,7 +430,7 @@ export async function getHomePageData() {
           name: `${item.givenName} ${item.familyName}`,
           label: item.constructorName,
           time: `${formatPoints(Number(item.points))} pts`,
-          accentColor: getConstructorTheme("", item.constructorName).accent,
+          accentColor: getTeamColor(item.constructorId, item.constructorName),
         })),
         overview: lastRaceOverview,
         insights: lastRaceWinner

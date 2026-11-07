@@ -10,9 +10,9 @@ export function Footer() {
             Your F1 community in one room. News, results, standings and everything that matters.
           </p>
           <p className="mt-3 text-[11px] leading-5 text-[rgba(255,255,255,0.34)] lg:w-[760px] lg:max-w-[calc(100vw-80px)]">
-            <span className="whitespace-nowrap">This website is unofficial and is not associated in any way with the Formula 1 companies.</span>
+            <span className="lg:whitespace-nowrap">This website is unofficial and is not associated in any way with the Formula 1 companies.</span>
             <br />
-            <span className="whitespace-nowrap">F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks of Formula One Licensing B.V.</span>
+            <span className="lg:whitespace-nowrap">F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks of Formula One Licensing B.V.</span>
           </p>
         </div>
 

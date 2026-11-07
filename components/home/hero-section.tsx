@@ -13,19 +13,19 @@ export function HeroSection() {
   const pathname = usePathname();
 
   return (
-    <section className="flex flex-col items-center gap-6 px-4 pt-10 pb-8 text-center sm:pt-14 sm:pb-10">
+    <section className="flex flex-col items-center gap-5 pt-6 pb-2 text-center sm:pt-8 sm:pb-3 lg:pt-10 lg:pb-4">
       <h1
         key={`hero-heading-${pathname}`}
-        className={`${anton.className} animate-fade-in max-w-full whitespace-normal uppercase leading-[0.95] tracking-[1px] text-[var(--color-red)] lg:whitespace-nowrap`}
+        className={`${anton.className} animate-fade-in max-w-full whitespace-normal text-balance uppercase leading-[0.95] tracking-[1px] text-[var(--color-red)] lg:whitespace-nowrap`}
         style={{ fontSize: "clamp(34px, 5.6vw, 72px)" }}
       >
         Your F1 Community in One Room
       </h1>
       <p
         key={`hero-copy-${pathname}`}
-        className="animate-fade-in max-w-full whitespace-nowrap text-[14px] uppercase leading-relaxed text-ink3 sm:text-[15px]"
+        className="animate-fade-in max-w-[640px] text-balance px-2 text-[13px] uppercase leading-relaxed tracking-[0.4px] text-ink2 sm:text-[14px] lg:max-w-full lg:whitespace-nowrap lg:text-[15px]"
       >
-        All the news, results, standings and race-week information you need. One community
+        All the news, results, standings and <span className="whitespace-nowrap">race-week</span> information you need. One community
       </p>
       <div className="mt-1 flex w-full justify-center sm:mt-0 lg:-mt-2">
         <div className="animate-fade-in flex w-full max-w-[1180px] flex-col items-center">

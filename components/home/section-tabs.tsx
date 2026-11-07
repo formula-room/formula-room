@@ -44,11 +44,11 @@ export function SectionTabs({ idPrefix, tabs, active, onChange, trailing, classN
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-4 border-b border-[var(--color-line)] px-6",
+        "flex flex-wrap items-center justify-between gap-x-4 border-b border-[var(--color-line)] px-5 sm:px-6",
         className,
       )}
     >
-      <div ref={groupRef} role="tablist" aria-orientation="horizontal" onKeyDown={handleKeyDown} className="flex items-center gap-6">
+      <div ref={groupRef} role="tablist" aria-orientation="horizontal" onKeyDown={handleKeyDown} className="flex items-center gap-5 sm:gap-6">
         {tabs.map((tab) => {
           const isActive = tab.value === active;
           return (
@@ -63,8 +63,8 @@ export function SectionTabs({ idPrefix, tabs, active, onChange, trailing, classN
               tabIndex={isActive ? 0 : -1}
               onClick={() => onChange(tab.value)}
               className={cn(
-                "relative -mb-px border-b-2 border-transparent py-3.5 text-[12px] font-medium uppercase tracking-[0.6px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-red)]",
-                isActive ? "border-[var(--color-red)] text-[var(--color-red)]" : "text-ink3 hover:text-ink2",
+                "relative -mb-px border-b-2 border-transparent py-3.5 text-[12px] font-medium uppercase tracking-[0.6px] transition-colors min-[360px]:whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-red)]",
+                isActive ? "border-[var(--color-red)] text-[var(--color-red)]" : "text-ink2 hover:text-ink",
               )}
             >
               {tab.label}

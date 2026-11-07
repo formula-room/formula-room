@@ -1,3 +1,4 @@
+import { Search, X } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
@@ -144,6 +145,42 @@ export function DashCard({
     <div className={cn("overflow-hidden rounded-[14px] border border-[var(--color-line2)] bg-white", className)}>
       {children}
     </div>
+  );
+}
+
+export function SearchBox({
+  value,
+  onChange,
+  onClear,
+  placeholder,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  /** Shows a clear button while there is text. */
+  onClear?: () => void;
+  placeholder: string;
+}) {
+  return (
+    <label className="relative block w-full sm:w-[260px]">
+      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink3" />
+      <input
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        aria-label={placeholder}
+        className="h-10 w-full rounded-full border border-[var(--color-line2)] bg-white pl-9 pr-9 text-sm text-ink outline-none transition focus:border-[var(--color-red-border)] focus:bg-white"
+      />
+      {onClear && value ? (
+        <button
+          type="button"
+          onClick={onClear}
+          aria-label="Clear search"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-ink3 transition-colors hover:text-ink"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      ) : null}
+    </label>
   );
 }
 

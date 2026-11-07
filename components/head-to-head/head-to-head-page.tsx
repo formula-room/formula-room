@@ -2,41 +2,18 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import {
-  type ComparisonMode,
-  type ComparisonScope,
-  type ComparisonTab,
-  type ComparisonType,
-  type DnfMode,
-  type DriverMeetingResult,
-  type DriverProfile,
-} from "@/lib/head-to-head-data";
+import type { ComparisonTab, DriverProfile } from "@/lib/head-to-head-data";
 import { fetchInternalApi } from "@/lib/client/internal-api";
-import { FilterCard } from "@/components/h2h/FilterCard";
-import { StatsOverview } from "@/components/h2h/StatsOverview";
-import { AnalysisPanel } from "@/components/h2h/AnalysisPanel";
-
-type CompareState = {
-  driverA: string;
-  driverB: string;
-  scope: ComparisonScope;
-  season: string;
-  seasonFrom: string;
-  seasonTo: string;
-  type: ComparisonType;
-  mode: ComparisonMode;
-  dnfMode: DnfMode;
-};
-
-type ApiMeeting = {
-  season: string;
-  round: string;
-  grandPrix: string;
-  type: ComparisonType;
-  notes: string;
-  resultA: DriverMeetingResult;
-  resultB: DriverMeetingResult;
-};
+import { FilterCard, type CompareState } from "@/components/h2h/FilterCard";
+import type { Summary } from "@/components/h2h/StatsOverview";
+import {
+  AnalysisPanel,
+  PanelMessage,
+  ReadyToCompare,
+  type ApiMeeting,
+  type BySeasonRow,
+  type ComparisonResult,
+} from "@/components/h2h/AnalysisPanel";
 
 type ApiPayload = {
   drivers: DriverProfile[];
@@ -45,31 +22,9 @@ type ApiPayload = {
     driverA: DriverProfile;
     driverB: DriverProfile;
   };
-  summary: {
-    raceH2H: { driverA: number; driverB: number };
-    qualiH2H: { driverA: number; driverB: number };
-    winsA: number;
-    winsB: number;
-    podiumsA: number;
-    podiumsB: number;
-    polesA: number;
-    polesB: number;
-    pointsA: number;
-    pointsB: number;
-    startsA: number;
-    startsB: number;
-    dnfsA: number;
-    dnfsB: number;
-  };
+  summary: Summary;
   meetings: ApiMeeting[];
-  bySeason: Array<{
-    season: string;
-    raceH2H: string;
-    qualiH2H: string;
-    points: string;
-    wins: string;
-    podiums: string;
-  }>;
+  bySeason: BySeasonRow[];
   sprintSupported: boolean;
 };
 
@@ -98,50 +53,50 @@ function normaliseCompareState(state: CompareState) {
   };
 }
 
+function scopeLabel(filters: CompareState) {
+  if (filters.scope === "Season") return `Season ${filters.season}`;
+  if (filters.scope === "Season Range") return `${filters.seasonFrom}-${filters.seasonTo}`;
+  return filters.scope;
+}
+
 export function HeadToHeadPageView() {
   const [draft, setDraft] = useState<CompareState>(defaultCompareState);
+  // Empty until Compare is clicked, so nothing loads and no zeroed results show before then.
   const [filters, setFilters] = useState<CompareState>(defaultCompareState);
   const [tab, setTab] = useState<ComparisonTab>("Overview");
   const [driverOptions, setDriverOptions] = useState<DriverProfile[]>([]);
   const [availableSeasons, setAvailableSeasons] = useState<string[]>([]);
+  const [driversLoading, setDriversLoading] = useState(true);
   const [data, setData] = useState<ApiPayload | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     async function loadOptions() {
-      setLoading(true);
-      setError(null);
-
       try {
         const options = await fetchInternalApi<{ drivers: DriverProfile[]; seasons: string[] }>("/api/head-to-head/options");
         if (cancelled) return;
 
-        const driverA = options.drivers[0]?.slug ?? "";
-        const driverB = options.drivers[1]?.slug ?? options.drivers[0]?.slug ?? "";
         const latestSeason = options.seasons[0] ?? "";
         const oldestSeason = options.seasons[options.seasons.length - 1] ?? latestSeason;
 
         setDriverOptions(options.drivers);
         setAvailableSeasons(options.seasons);
-
-        const nextState = {
-          ...defaultCompareState,
-          driverA,
-          driverB,
+        setDraft((current) => ({
+          ...current,
           season: latestSeason,
           seasonFrom: oldestSeason,
           seasonTo: latestSeason,
-        };
-
-        setDraft(nextState);
-        setFilters(nextState);
+        }));
       } catch (loadError) {
         if (!cancelled) {
           setError(loadError instanceof Error ? loadError.message : "Unable to load driver options.");
-          setLoading(false);
+        }
+      } finally {
+        if (!cancelled) {
+          setDriversLoading(false);
         }
       }
     }
@@ -158,12 +113,11 @@ export function HeadToHeadPageView() {
 
     async function loadComparison() {
       if (!filters.driverA || !filters.driverB || filters.driverA === filters.driverB) {
-        setData(null);
-        setLoading(false);
         return;
       }
 
       setLoading(true);
+      setData(null);
       setError(null);
 
       const query = new URLSearchParams({
@@ -207,16 +161,6 @@ export function HeadToHeadPageView() {
     };
   }, [filters]);
 
-  const driverA =
-    data?.selectedDrivers.driverA ??
-    driverOptions.find((driver) => driver.slug === draft.driverA) ??
-    driverOptions[0];
-  const driverB =
-    data?.selectedDrivers.driverB ??
-    driverOptions.find((driver) => driver.slug === draft.driverB) ??
-    driverOptions[1] ??
-    driverOptions[0];
-
   const tabMeetings = useMemo(() => {
     if (!data) return [];
 
@@ -241,33 +185,49 @@ export function HeadToHeadPageView() {
 
   const canCompare = draft.driverA !== "" && draft.driverB !== "" && draft.driverA !== draft.driverB;
 
-  if (!driverA || !driverB) {
-    return (
-      <div className="mx-auto max-w-[1140px] px-8 py-10 pb-20">
-        <div className="rounded-[16px] border border-[var(--color-line2)] bg-white px-8 py-14 text-center text-sm text-[var(--color-red)]">
-          {error ?? "No driver comparison data is available yet."}
-        </div>
-      </div>
+  // Two drivers from different eras have no shared meetings, which would otherwise read as a page of zeros.
+  const result: ComparisonResult | null =
+    data && data.meetings.length > 0
+      ? {
+          driverA: data.selectedDrivers.driverA,
+          driverB: data.selectedDrivers.driverB,
+          summary: data.summary,
+          allMeetings: data.meetings,
+          meetings: tabMeetings,
+          bySeason: data.bySeason,
+          type: filters.type,
+          appliedFilters: [scopeLabel(filters), filters.mode, filters.dnfMode],
+        }
+      : null;
+
+  let notice = <ReadyToCompare />;
+  if (error) {
+    notice = <PanelMessage title="Comparison unavailable" tone="error">{error}</PanelMessage>;
+  } else if (loading) {
+    notice = <PanelMessage title="Loading comparison..." />;
+  } else if (data) {
+    notice = (
+      <PanelMessage title="No shared meetings">
+        {data.selectedDrivers.driverA.name} and {data.selectedDrivers.driverB.name} have no meetings that match these filters.
+      </PanelMessage>
     );
+  } else if (!driversLoading && driverOptions.length === 0) {
+    notice = <PanelMessage title="No driver data">No driver comparison data is available yet.</PanelMessage>;
   }
 
   return (
-    <div className="mx-auto max-w-[1140px] px-4 py-8 pb-20 sm:px-8 lg:py-10">
-      <section className="mb-8 flex items-end justify-between animate-fade-up animate-fade-up-1">
-        <div>
-          <div className="mb-2 flex items-center gap-2">
-            <span className="h-px w-5 bg-[var(--color-red)]" />
-            <span className="text-[10px] font-medium uppercase tracking-[1.5px] text-ink3">
-              Comparison Tool
-            </span>
-          </div>
-          <h1 className="font-display text-[64px] leading-[0.92] tracking-[1px] text-ink">
-            Head-to-Head
-          </h1>
-          <p className="mt-3 max-w-[480px] text-[13px] font-light leading-relaxed text-ink3">
-            Compare two drivers across meetings, teammate windows, season cuts, and sprint formats.
-          </p>
+    <div className="space-y-6">
+      <section>
+        <div className="mb-3 flex items-center gap-2.5">
+          <span aria-hidden="true" className="h-0.5 w-6 bg-[var(--color-red)]" />
+          <p className="text-[11px] font-medium uppercase tracking-[2px] text-ink3">Comparison Tool</p>
         </div>
+        <h1 className="font-display text-[56px] italic leading-[0.9] tracking-[1px] text-ink min-[400px]:text-[64px] sm:text-[78px]">
+          Head-to-Head
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-6 text-ink2">
+          Compare two drivers across races, seasons and event formats.
+        </p>
       </section>
 
       <FilterCard
@@ -275,6 +235,7 @@ export function HeadToHeadPageView() {
         setDraft={setDraft}
         driverOptions={driverOptions}
         availableSeasons={availableSeasons}
+        driversLoading={driversLoading}
         canCompare={canCompare}
         onCompare={() => {
           setFilters(normaliseCompareState(draft));
@@ -282,29 +243,7 @@ export function HeadToHeadPageView() {
         }}
       />
 
-      <StatsOverview
-        driverA={driverA}
-        driverB={driverB}
-        summary={data?.summary ?? null}
-        scope={filters.scope}
-        type={filters.type}
-        mode={filters.mode}
-        loading={loading}
-        error={error}
-      />
-
-      <AnalysisPanel
-        tab={tab}
-        onTabChange={setTab}
-        meetings={tabMeetings}
-        bySeason={data?.bySeason ?? []}
-        driverA={driverA}
-        driverB={driverB}
-        scope={filters.scope}
-        type={filters.type}
-        mode={filters.mode}
-        dnfMode={filters.dnfMode}
-      />
+      <AnalysisPanel tab={tab} onTabChange={setTab} result={result} notice={notice} />
     </div>
   );
 }

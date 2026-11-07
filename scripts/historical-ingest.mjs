@@ -9,6 +9,7 @@ dotenv.config();
 
 const DEFAULT_BASE_URL = "https://api.jolpi.ca/ergast/f1";
 const MAX_RETRIES = 20;
+const RESULTS_PAGE_SIZE = 100;
 const BASE_RETRY_DELAY_MS = 10000;
 const MIN_REQUEST_INTERVAL_MS = 1000;
 const QUALIFYING_COVERAGE_START_YEAR = 1994;
@@ -26,9 +27,12 @@ function getBaseUrl() {
   return (process.env.JOLPICA_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/$/, "");
 }
 
-function buildUrl(resourcePath) {
+function buildUrl(resourcePath, page) {
   const url = new URL(`${getBaseUrl()}/${resourcePath.replace(/^\//, "")}`);
-  url.searchParams.set("limit", "2000");
+  url.searchParams.set("limit", String(page?.limit ?? 2000));
+  if (page) {
+    url.searchParams.set("offset", String(page.offset));
+  }
   return url;
 }
 
@@ -58,14 +62,14 @@ function getRetryDelayMs(response, attempt) {
   return BASE_RETRY_DELAY_MS * (attempt + 1);
 }
 
-async function fetchJson(resourcePath) {
+async function fetchJson(resourcePath, page) {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt += 1) {
     let response;
 
     try {
       await throttleRequests();
 
-      response = await fetch(buildUrl(resourcePath), {
+      response = await fetch(buildUrl(resourcePath, page), {
         headers: {
           accept: "application/json",
           "user-agent": "f1-dashboard-historical-ingestion/1.0",
@@ -598,9 +602,42 @@ async function fetchConstructorStandings(seasonYear) {
   return payload?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings ?? [];
 }
 
+// Jolpica returns at most 100 result rows per request, whatever limit is asked for. Pages are
+// cut by result row, so one sprint can span two pages. Throws rather than return a partial season.
 async function fetchSeasonSprintResults(seasonYear) {
-  const payload = await fetchJson(`${seasonYear}/sprint.json`);
-  return payload?.MRData?.RaceTable?.Races ?? [];
+  const resourcePath = `${seasonYear}/sprint.json`;
+  const racesByRound = new Map();
+  let offset = 0;
+  let total = 0;
+
+  do {
+    const payload = await fetchJson(resourcePath, { limit: RESULTS_PAGE_SIZE, offset });
+    const races = payload?.MRData?.RaceTable?.Races ?? [];
+    let pageRows = 0;
+
+    for (const race of races) {
+      const rows = race.SprintResults ?? [];
+      const existing = racesByRound.get(race.round);
+      if (existing) {
+        existing.SprintResults.push(...rows);
+      } else {
+        racesByRound.set(race.round, { ...race, SprintResults: [...rows] });
+      }
+      pageRows += rows.length;
+    }
+
+    total = Number(payload?.MRData?.total ?? 0);
+    if (pageRows === 0) {
+      break;
+    }
+    offset += pageRows;
+  } while (offset < total);
+
+  if (offset < total) {
+    throw new Error(`Jolpica returned ${offset} of ${total} sprint results for ${seasonYear}.`);
+  }
+
+  return Array.from(racesByRound.values());
 }
 
 async function getExistingCoverage(sql) {
@@ -770,12 +807,15 @@ async function main() {
           (expectedCompletedSeason && qualifyingResultCount < schedule.length * 10)
         );
 
+      const expectedSprintResultCount = Array.from(sprintRaceByRound.values())
+        .reduce((count, rows) => count + rows.length, 0);
       const needsSprintIngest =
         seasonHasSprint &&
         (
           !existing ||
           existing.sprint_result_count === 0 ||
-          existing.sprint_race_count < sprintRaceByRound.size
+          existing.sprint_race_count < sprintRaceByRound.size ||
+          existing.sprint_result_count < expectedSprintResultCount
         );
 
       const seasonLooksComplete =

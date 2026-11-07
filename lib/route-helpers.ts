@@ -28,6 +28,11 @@ export function getEventHrefBySlug(slug: string) {
   return slug ? `/event/${slug}` : null;
 }
 
+/** Opens one specific race weekend at Results > Race. Slugs repeat across seasons, so season and round are included. */
+export function getEventRaceResultsHref(slug: string, seasonYear: number, round: number) {
+  return `/event/${slug}?season=${seasonYear}&round=${round}&tab=results&session=race`;
+}
+
 export function getEventHrefByGrandPrix(grandPrix: string) {
   return grandPrix ? `/event/${slugifyF1Segment(grandPrix)}` : null;
 }

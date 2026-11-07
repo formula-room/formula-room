@@ -10,25 +10,19 @@ import {
   MapPin,
   Play,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 
 import { fetchInternalApi } from "@/lib/client/internal-api";
 import { CircuitOutline } from "@/components/circuit/circuit-outline";
 import { DashCard, StatusBadge } from "@/components/dashboard/page-primitives";
+import { ResultRow as ResultRowItem } from "@/components/home/rank-row";
+import { CountryFlag } from "@/components/shared/country-flag";
 import {
   getCircuitHrefByName,
   getDriverHrefByName,
   getTeamHrefByName,
 } from "@/lib/route-helpers";
 import { cn } from "@/lib/utils";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type EventStatus = "Upcoming" | "This Weekend" | "Completed";
@@ -45,6 +39,8 @@ type ResultRow = {
   position: string;
   entry: string;
   team: string;
+  teamColor?: string;
+  laps?: string;
   value: string;
 };
 
@@ -62,7 +58,7 @@ type CircuitFact = {
 type EventWeekend = {
   slug: string;
   grandPrix: string;
-  flag: string;
+  flagCountry: string;
   circuitId?: string;
   circuit: string;
   country: string;
@@ -263,8 +259,15 @@ function WeekendHero({ weekend }: { weekend: EventWeekend }) {
               F1 - FIA Formula One World Championship
             </p>
             <h1 className="mb-3 font-display text-[44px] leading-[0.9] tracking-[1px] text-ink sm:text-[52px]">
-              {weekend.grandPrix.replace(/\s+Grand Prix$/i, "")}{" "}
-              <span className="text-[var(--color-red)]">Grand Prix</span>
+              {weekend.grandPrix.split(/(Grand Prix)/i).map((part, index) =>
+                index % 2 === 1 ? (
+                  <span key={part} className="text-[var(--color-red)]">
+                    {part}
+                  </span>
+                ) : (
+                  part
+                ),
+              )}
             </h1>
             <div className="flex items-center gap-2 text-[14px] font-light text-ink3">
               <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
@@ -463,7 +466,16 @@ function WeekendSidebar({ weekend }: { weekend: EventWeekend }) {
         {[
           { icon: Calendar, label: "Date Range", value: weekend.dateRange },
           { icon: Clock, label: "Circuit", value: weekend.circuit },
-          { icon: MapPin, label: "Country", value: `${weekend.flag} ${weekend.country}` },
+          {
+            icon: MapPin,
+            label: "Country",
+            value: (
+              <span className="flex items-center gap-2">
+                <CountryFlag country={weekend.flagCountry} className="h-[14px] w-[21px] rounded-[2px] border-black/10 shadow-none" />
+                {weekend.country}
+              </span>
+            ),
+          },
           { icon: ArrowRight, label: "Next Session", value: weekend.nextSession, highlight: true },
           { icon: Play, label: "Format", value: format },
         ].map((row) => (
@@ -533,7 +545,33 @@ function WeekendSidebar({ weekend }: { weekend: EventWeekend }) {
   );
 }
 
-function ResultsTables({ weekend }: { weekend: EventWeekend }) {
+const FINISH_STATUS: Record<string, { code: string; label: string }> = {
+  R: { code: "RET", label: "Retired" },
+  D: { code: "DSQ", label: "Disqualified" },
+  N: { code: "NC", label: "Not classified" },
+  W: { code: "WD", label: "Withdrawn" },
+  F: { code: "DNQ", label: "Did not qualify" },
+  E: { code: "EXC", label: "Excluded" },
+};
+
+function getFinish(position: string) {
+  const place = position.match(/^P(\d+)$/)?.[1];
+  if (place) {
+    return { position: Number(place), status: undefined };
+  }
+
+  return { position: FINISH_STATUS[position]?.code ?? position, status: FINISH_STATUS[position] };
+}
+
+function getBadgeClass(position: number | string, status?: { code: string }) {
+  if (typeof position === "number") {
+    return position <= 3 ? `race-medal-${position}` : "race-black";
+  }
+
+  return status?.code === "DSQ" ? "race-status-dsq" : "race-status";
+}
+
+function ResultsTables({ weekend, initialSession }: { weekend: EventWeekend; initialSession?: string }) {
   if (weekend.results.length === 0) {
     return (
       <DashCard className="p-8 text-center text-[13px] text-ink3">
@@ -542,7 +580,10 @@ function ResultsTables({ weekend }: { weekend: EventWeekend }) {
     );
   }
 
-  const defaultTab = weekend.results.find((result) => result.key === "qualifying")?.key ?? weekend.results[0]?.key;
+  const defaultTab =
+    weekend.results.find((result) => result.key === initialSession)?.key ??
+    weekend.results.find((result) => result.key === "qualifying")?.key ??
+    weekend.results[0]?.key;
 
   return (
     <Tabs defaultValue={defaultTab} className="space-y-4">
@@ -558,44 +599,52 @@ function ResultsTables({ weekend }: { weekend: EventWeekend }) {
         ))}
       </TabsList>
 
-      {weekend.results.map((result) => (
-        <TabsContent key={result.key} value={result.key}>
-          <DashCard>
-            <Table>
-              <TableHeader>
-                <TableRow className="border-[var(--color-line)] hover:bg-transparent">
-                  <TableHead className="px-5 py-4 text-[10px] uppercase tracking-[1px] text-ink3">Pos</TableHead>
-                  <TableHead className="px-5 py-4 text-[10px] uppercase tracking-[1px] text-ink3">Entry</TableHead>
-                  <TableHead className="px-5 py-4 text-[10px] uppercase tracking-[1px] text-ink3">Team</TableHead>
-                  <TableHead className="px-5 py-4 text-[10px] uppercase tracking-[1px] text-ink3">Result</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {result.rows.map((row) => (
-                  <TableRow key={`${result.key}-${row.position}-${row.entry}`} className="border-[var(--color-line)] hover:bg-[var(--color-bg)]">
-                    <TableCell className="px-5 py-4 text-[13px] font-medium text-ink2">{row.position}</TableCell>
-                    <TableCell className="px-5 py-4 text-[13px] font-medium text-ink">
-                      {getDriverHrefByName(row.entry) ? (
-                        <Link href={getDriverHrefByName(row.entry)!} className="hover:text-[var(--color-red)]">
-                          {row.entry}
-                        </Link>
-                      ) : row.entry}
-                    </TableCell>
-                    <TableCell className="px-5 py-4 text-[13px] text-ink2">
-                      {getTeamHrefByName(row.team) ? (
-                        <Link href={getTeamHrefByName(row.team)!} className="hover:text-ink">
-                          {row.team}
-                        </Link>
-                      ) : row.team}
-                    </TableCell>
-                    <TableCell className="px-5 py-4 text-[13px] font-medium text-ink">{row.value}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </DashCard>
-        </TabsContent>
-      ))}
+      {weekend.results.map((result) => {
+        const isQualifying = result.key === "qualifying";
+        const showLaps = !isQualifying && result.rows.some((row) => row.laps);
+        const statuses = [
+          ...new Set(result.rows.flatMap((row) => getFinish(row.position).status ?? [])),
+        ];
+
+        return (
+          <TabsContent key={result.key} value={result.key}>
+            <DashCard className="px-4 py-4 max-[359px]:px-3 sm:px-6 sm:py-5">
+              <ol
+                className="grid gap-2.5 xl:grid-flow-col xl:grid-rows-[repeat(var(--result-rows),auto)] xl:gap-x-6"
+                style={{ "--result-rows": Math.ceil(result.rows.length / 2) } as CSSProperties}
+              >
+                {result.rows.map((row) => {
+                  const finish = getFinish(row.position);
+
+                  return (
+                    <ResultRowItem
+                      key={`${result.key}-${row.position}-${row.entry}`}
+                      position={finish.position}
+                      badgeClassName={getBadgeClass(finish.position, finish.status)}
+                      statusLabel={finish.status?.label}
+                      name={row.entry}
+                      team={row.team}
+                      value={isQualifying ? row.value : row.value.replace(/\s*pts?$/, "")}
+                      valueCaption={isQualifying ? undefined : "Pts"}
+                      laps={showLaps ? (row.laps ?? null) : undefined}
+                      accentColor={row.teamColor ?? "#C8201A"}
+                      href={getDriverHrefByName(row.entry)}
+                      teamHref={getTeamHrefByName(row.team)}
+                      isClassified={typeof finish.position === "number"}
+                    />
+                  );
+                })}
+              </ol>
+
+              {statuses.length ? (
+                <p className="mt-4 text-[11px] font-medium text-ink3">
+                  {statuses.map((status) => `${status.code} = ${status.label}`).join(" · ")}
+                </p>
+              ) : null}
+            </DashCard>
+          </TabsContent>
+        );
+      })}
     </Tabs>
   );
 }
@@ -652,9 +701,19 @@ type EventPageViewProps = {
   slug: string;
   season?: number;
   round?: number;
+  /** From the URL, so links can open a specific tab. Unknown values fall back to the defaults. */
+  initialTab?: string;
+  initialSession?: string;
 };
 
-export function EventPageView({ slug, season, round }: EventPageViewProps) {
+const EVENT_TABS = [
+  ["overview", "Overview"],
+  ["weekend-schedule", "Weekend Schedule"],
+  ["results", "Results"],
+  ["circuit-info", "Circuit Info"],
+];
+
+export function EventPageView({ slug, season, round, initialTab, initialSession }: EventPageViewProps) {
   const [weekend, setWeekend] = useState<EventWeekend | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -716,14 +775,12 @@ export function EventPageView({ slug, season, round }: EventPageViewProps) {
     <div className="mx-auto w-full max-w-[1140px] px-0 pb-20">
       <WeekendHero weekend={weekend} />
 
-      <Tabs defaultValue="weekend-schedule" className="space-y-6">
+      <Tabs
+        defaultValue={EVENT_TABS.some(([value]) => value === initialTab) ? initialTab : "weekend-schedule"}
+        className="space-y-6"
+      >
         <TabsList className="flex w-fit flex-wrap rounded-[10px] border border-[var(--color-line2)] bg-white p-1 animate-fade-up animate-fade-up-2">
-          {[
-            ["overview", "Overview"],
-            ["weekend-schedule", "Weekend Schedule"],
-            ["results", "Results"],
-            ["circuit-info", "Circuit Info"],
-          ].map(([value, label]) => (
+          {EVENT_TABS.map(([value, label]) => (
             <TabsTrigger
               key={value}
               value={value}
@@ -743,7 +800,7 @@ export function EventPageView({ slug, season, round }: EventPageViewProps) {
               <SchedulePanel weekend={weekend} />
             </TabsContent>
             <TabsContent value="results">
-              <ResultsTables weekend={weekend} />
+              <ResultsTables weekend={weekend} initialSession={initialSession} />
             </TabsContent>
             <TabsContent value="circuit-info">
               <CircuitInfoPanel weekend={weekend} />

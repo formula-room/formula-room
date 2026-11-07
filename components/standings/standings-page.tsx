@@ -1,19 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { fetchInternalApi } from "@/lib/client/internal-api";
-import { cn } from "@/lib/utils";
 import { getDriverHref, getTeamHref, getTeamHrefByName } from "@/lib/route-helpers";
-import { CountryFlag } from "@/components/shared/country-flag";
+import { SectionTabs, tabButtonId, tabPanelId } from "@/components/home/section-tabs";
+import { StandingsRow } from "@/components/home/rank-row";
 import {
   DashCard,
   DashCardHead,
-  MedalPos,
+  SearchBox,
   TeamIconBadge,
-  TeamStripeV,
   premiumSelectContentClass,
   premiumSelectTriggerClass,
 } from "@/components/dashboard/page-primitives";
@@ -24,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type DriverStanding = {
   slug: string;
@@ -50,13 +47,7 @@ type TeamStanding = {
 };
 
 type StandingsTab = "drivers" | "teams";
-type ZoneKey = "points" | "lower" | "none";
-
-const zoneLabels: Record<ZoneKey, string> = {
-  points: "Points scorers",
-  lower: "Lower scorers",
-  none: "No points yet",
-};
+const STANDINGS_TABS_ID = "standings-page";
 
 function toNumber(value: string | number) {
   if (typeof value === "number") {
@@ -65,11 +56,6 @@ function toNumber(value: string | number) {
 
   const parsed = Number(value.replace(/[^0-9.-]/g, ""));
   return Number.isFinite(parsed) ? parsed : 0;
-}
-
-function toPosition(value: string) {
-  const parsed = Number.parseInt(value, 10);
-  return Number.isFinite(parsed) ? parsed : 999;
 }
 
 function formatPoints(value: string | number) {
@@ -118,34 +104,6 @@ function teamIdFromText(value: string) {
   return normalized.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-function zoneForPoints(points: string | number): ZoneKey {
-  const value = toNumber(points);
-
-  if (value > 10) {
-    return "points";
-  }
-
-  if (value > 0) {
-    return "lower";
-  }
-
-  return "none";
-}
-
-function groupByZone<T extends { points: string | number }>(rows: T[]) {
-  const groups: Record<ZoneKey, T[]> = {
-    points: [],
-    lower: [],
-    none: [],
-  };
-
-  for (const row of rows) {
-    groups[zoneForPoints(row.points)].push(row);
-  }
-
-  return groups;
-}
-
 function EmptyState({ message }: { message: string }) {
   return (
     <div className="flex min-h-[220px] items-center justify-center rounded-[12px] border border-dashed border-[var(--color-line2)] bg-[var(--color-bg)] px-6 text-center text-sm text-ink2">
@@ -154,189 +112,100 @@ function EmptyState({ message }: { message: string }) {
   );
 }
 
-function SearchBox({
-  value,
-  onChange,
-  placeholder,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder: string;
-}) {
-  return (
-    <label className="relative block w-full sm:w-[260px]">
-      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink3" />
-      <input
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        className="h-10 w-full rounded-full border border-[var(--color-line2)] bg-white pl-9 pr-4 text-sm text-ink outline-none transition focus:border-[var(--color-red-border)] focus:bg-white"
-      />
-    </label>
-  );
+function statLabel(value: number, singular: string, plural: string) {
+  return `${value} ${value === 1 ? singular : plural}`;
 }
 
-function ZoneDivider({ label, count }: { label: string; count: number }) {
+function splitColumns<T>(rows: T[]) {
+  const midpoint = Math.ceil(rows.length / 2);
+  return [rows.slice(0, midpoint), rows.slice(midpoint)];
+}
+
+function StandingsMeta({ team, wins, podiums, gap }: { team: string; wins: number; podiums: number; gap: string }) {
+  const teamHref = team.includes(" / ") ? null : getTeamHrefByName(team);
+
   return (
-    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 py-3">
-      <div className="h-px bg-[var(--color-line)]" />
-      <div className="text-[10px] font-semibold uppercase tracking-[1.3px] text-ink3">
-        {label} <span className="text-ink4">({count})</span>
-      </div>
-      <div className="h-px bg-[var(--color-line)]" />
+    <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-medium text-ink3 sm:text-xs">
+      {teamHref ? (
+        <Link href={teamHref} className="truncate hover:text-ink">
+          {team}
+        </Link>
+      ) : (
+        <span className="truncate">{team}</span>
+      )}
+      <span aria-hidden="true">·</span>
+      <span>{statLabel(wins, "Win", "Wins")}</span>
+      <span aria-hidden="true">·</span>
+      <span>{statLabel(podiums, "Podium", "Podiums")}</span>
+      <span aria-hidden="true">·</span>
+      <span>{gap}</span>
     </div>
   );
 }
 
-function DriverRows({
-  rows,
-  leaderPoints,
-}: {
-  rows: DriverStanding[];
-  leaderPoints: number;
-}) {
-  const groups = groupByZone(rows);
-  const zones: ZoneKey[] = ["points", "lower", "none"];
+function DriverRows({ rows, leaderPoints }: { rows: DriverStanding[]; leaderPoints: number }) {
+  const columns = splitColumns(rows);
 
   return (
-    <div className="overflow-x-auto">
-      <div className="min-w-[860px]">
-        <div className="grid grid-cols-[72px_2fr_1.35fr_120px_92px_104px_108px] items-center border-b border-[var(--color-line)] px-4 py-3 text-[10px] font-semibold uppercase tracking-[1.2px] text-ink3">
-          <div>Pos</div>
-          <div>Driver</div>
-          <div>Team</div>
-          <div className="text-right">Points</div>
-          <div className="text-right">Wins</div>
-          <div className="text-right">Podiums</div>
-          <div className="text-right">Gap</div>
-        </div>
-
-        {zones.map((zone) =>
-          groups[zone].length ? (
-            <div key={zone}>
-              <ZoneDivider label={zoneLabels[zone]} count={groups[zone].length} />
-              {groups[zone].map((row) => {
-                const pos = toPosition(row.position);
-                const driverHref = getDriverHref(row.slug);
-                const teamHref = row.team.includes(" / ") ? null : getTeamHrefByName(row.team);
-
-                return (
-                  <div
-                    key={row.slug}
-                    className={cn(
-                      "grid grid-cols-[72px_2fr_1.35fr_120px_92px_104px_108px] items-center border-b border-[var(--color-line)] px-4 py-3 transition hover:bg-[var(--color-bg)]",
-                      toNumber(row.points) === 0 && "opacity-65",
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <TeamStripeV color={row.teamColor} />
-                      <MedalPos pos={pos} />
-                    </div>
-                    <div className="min-w-0">
-                      {driverHref ? (
-                        <Link href={driverHref} className="flex min-w-0 items-center gap-2 font-semibold text-ink hover:text-[var(--color-red)]">
-                          <CountryFlag country={row.flagCountry || row.flag} className="h-5 w-7 flex-shrink-0 rounded-[3px] border-[var(--color-line2)] bg-white" />
-                          <span className="truncate">{displayDriverName(row.driver)}</span>
-                        </Link>
-                      ) : (
-                        <span className="flex min-w-0 items-center gap-2 font-semibold text-ink">
-                          <CountryFlag country={row.flagCountry || row.flag} className="h-5 w-7 flex-shrink-0 rounded-[3px] border-[var(--color-line2)] bg-white" />
-                          <span className="truncate">{displayDriverName(row.driver)}</span>
-                        </span>
-                      )}
-                    </div>
-                    <div className="min-w-0 text-sm text-ink2">
-                      {teamHref ? (
-                        <Link href={teamHref} className="truncate hover:text-ink">
-                          {row.team}
-                        </Link>
-                      ) : (
-                        <span className="truncate">{row.team}</span>
-                      )}
-                    </div>
-                    <div className="text-right font-display text-[28px] leading-none tracking-[0.5px] text-ink">
-                      {formatPoints(row.points)}
-                    </div>
-                    <div className="text-right text-sm font-medium text-ink2">{row.wins}</div>
-                    <div className="text-right text-sm font-medium text-ink2">{row.podiums}</div>
-                    <div className="text-right text-sm font-medium text-ink3">{gapToLeader(row.points, leaderPoints)}</div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : null,
-        )}
-      </div>
+    <div className="grid gap-x-6 gap-y-4 lg:grid-cols-2">
+      {columns.map((column, columnIndex) => (
+        <ol key={columnIndex} className="space-y-4">
+          {column.map((row) => (
+            <StandingsRow
+              key={row.slug}
+              pos={Number.parseInt(row.position, 10) || 0}
+              name={displayDriverName(row.driver)}
+              team={row.team}
+              points={formatPoints(row.points)}
+              accentColor={row.teamColor}
+              href={getDriverHref(row.slug)}
+              showFlag
+              flagCountry={row.flagCountry}
+              meta={
+                <StandingsMeta
+                  team={row.team}
+                  wins={row.wins}
+                  podiums={row.podiums}
+                  gap={gapToLeader(row.points, leaderPoints)}
+                />
+              }
+            />
+          ))}
+        </ol>
+      ))}
     </div>
   );
 }
 
-function TeamRows({
-  rows,
-  leaderPoints,
-}: {
-  rows: TeamStanding[];
-  leaderPoints: number;
-}) {
-  const groups = groupByZone(rows);
-  const zones: ZoneKey[] = ["points", "lower", "none"];
+function TeamRows({ rows, leaderPoints }: { rows: TeamStanding[]; leaderPoints: number }) {
+  const columns = splitColumns(rows);
 
   return (
-    <div className="overflow-x-auto">
-      <div className="min-w-[760px]">
-        <div className="grid grid-cols-[72px_2fr_120px_92px_104px_108px] items-center border-b border-[var(--color-line)] px-4 py-3 text-[10px] font-semibold uppercase tracking-[1.2px] text-ink3">
-          <div>Pos</div>
-          <div>Team</div>
-          <div className="text-right">Points</div>
-          <div className="text-right">Wins</div>
-          <div className="text-right">Podiums</div>
-          <div className="text-right">Gap</div>
-        </div>
-
-        {zones.map((zone) =>
-          groups[zone].length ? (
-            <div key={zone}>
-              <ZoneDivider label={zoneLabels[zone]} count={groups[zone].length} />
-              {groups[zone].map((row) => {
-                const pos = toPosition(row.position);
-                const teamId = teamIdFromText(row.slug || row.team);
-                const teamHref = getTeamHref(row.slug);
-
-                return (
-                  <div
-                    key={row.slug}
-                    className={cn(
-                      "grid grid-cols-[72px_2fr_120px_92px_104px_108px] items-center border-b border-[var(--color-line)] px-4 py-3 transition hover:bg-[var(--color-bg)]",
-                      toNumber(row.points) === 0 && "opacity-65",
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <TeamStripeV teamId={teamId} color={row.teamColor} />
-                      <MedalPos pos={pos} />
-                    </div>
-                    <div className="flex min-w-0 items-center gap-3">
-                      <TeamIconBadge teamId={teamId} color={row.teamColor} abbr={abbrFromName(row.team)} />
-                      {teamHref ? (
-                        <Link href={teamHref} className="truncate font-semibold text-ink hover:text-[var(--color-red)]">
-                          {row.team}
-                        </Link>
-                      ) : (
-                        <span className="truncate font-semibold text-ink">{row.team}</span>
-                      )}
-                    </div>
-                    <div className="text-right font-display text-[28px] leading-none tracking-[0.5px] text-ink">
-                      {formatPoints(row.points)}
-                    </div>
-                    <div className="text-right text-sm font-medium text-ink2">{row.wins}</div>
-                    <div className="text-right text-sm font-medium text-ink2">{row.podiums}</div>
-                    <div className="text-right text-sm font-medium text-ink3">{gapToLeader(row.points, leaderPoints)}</div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : null,
-        )}
-      </div>
+    <div className="grid gap-x-6 gap-y-4 lg:grid-cols-2">
+      {columns.map((column, columnIndex) => (
+        <ol key={columnIndex} className="space-y-4">
+          {column.map((row) => (
+            <StandingsRow
+              key={row.slug}
+              pos={Number.parseInt(row.position, 10) || 0}
+              name={row.team}
+              team={row.team}
+              points={formatPoints(row.points)}
+              accentColor={row.teamColor}
+              href={getTeamHref(row.slug)}
+              meta={
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-medium text-ink3 sm:text-xs">
+                  <span>{statLabel(row.wins, "Win", "Wins")}</span>
+                  <span aria-hidden="true">·</span>
+                  <span>{statLabel(row.podiums, "Podium", "Podiums")}</span>
+                  <span aria-hidden="true">·</span>
+                  <span>{gapToLeader(row.points, leaderPoints)}</span>
+                </div>
+              }
+            />
+          ))}
+        </ol>
+      ))}
     </div>
   );
 }
@@ -410,24 +279,15 @@ function LeaderPanel({
 
       <DashCard>
         <DashCardHead eyebrow="Gap watch" title="Top runners" />
-        <div className="space-y-4 p-6">
-          {topRows.map((row) => {
-            const name = isDrivers ? (row as DriverStanding).driver : (row as TeamStanding).team;
-            const color = row.teamColor;
-            const width = leaderPoints > 0 ? Math.max((toNumber(row.points) / leaderPoints) * 100, 3) : 3;
-
-            return (
-              <div key={row.slug}>
-                <div className="mb-1 flex items-center justify-between gap-3 text-xs">
-                  <span className="truncate font-semibold text-ink">{name}</span>
-                  <span className="text-ink3">{gapToLeader(row.points, leaderPoints)}</span>
-                </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-[var(--color-bg2)]">
-                  <div className="h-full rounded-full" style={{ width: `${width}%`, backgroundColor: color }} />
-                </div>
-              </div>
-            );
-          })}
+        <div className="divide-y divide-[var(--color-line)] px-6 py-2 text-sm">
+          {topRows.map((row) => (
+            <div key={row.slug} className="flex items-center justify-between gap-3 py-3">
+              <span className="truncate font-semibold text-ink">
+                {isDrivers ? (row as DriverStanding).driver : (row as TeamStanding).team}
+              </span>
+              <span className="flex-shrink-0 text-ink2">{gapToLeader(row.points, leaderPoints)}</span>
+            </div>
+          ))}
         </div>
       </DashCard>
 
@@ -618,43 +478,38 @@ export function StandingsPageView() {
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
         <DashCard>
-          <div className="flex flex-col gap-4 border-b border-[var(--color-line)] px-5 py-5 lg:flex-row lg:items-center lg:justify-between">
-            <Tabs
-              value={tab}
-              onValueChange={(value) => {
-                setTab(value as StandingsTab);
-                setSearch("");
-              }}
-            >
-              <TabsList className="h-auto rounded-full border border-[var(--color-line2)] bg-[var(--color-bg)] p-1">
-                <TabsTrigger
-                  value="drivers"
-                  className="rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-[1.2px] text-ink2 data-[state=active]:bg-ink data-[state=active]:text-white"
-                >
-                  Drivers
-                </TabsTrigger>
-                <TabsTrigger
-                  value="teams"
-                  className="rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-[1.2px] text-ink2 data-[state=active]:bg-ink data-[state=active]:text-white"
-                >
-                  Teams
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+          <SectionTabs
+            idPrefix={STANDINGS_TABS_ID}
+            tabs={[
+              { value: "drivers", label: "Driver Championship" },
+              { value: "teams", label: "Team Championship" },
+            ]}
+            active={tab}
+            onChange={(value) => {
+              setTab(value as StandingsTab);
+              setSearch("");
+            }}
+            className="overflow-x-auto"
+          />
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <div className="text-xs text-ink3">
-                {activeRows.length} {tab === "drivers" ? "drivers" : "teams"}
-              </div>
-              <SearchBox
-                value={search}
-                onChange={setSearch}
-                placeholder={tab === "drivers" ? "Search driver or team" : "Search team"}
-              />
+          <div className="flex flex-col gap-3 border-b border-[var(--color-line)] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-ink3">
+              {activeRows.length} {tab === "drivers" ? "drivers" : "teams"}
             </div>
+            <SearchBox
+              value={search}
+              onChange={setSearch}
+              placeholder={tab === "drivers" ? "Search driver or team" : "Search team"}
+            />
           </div>
 
-          <div className="p-4">
+          <div
+            id={tabPanelId(STANDINGS_TABS_ID, tab)}
+            role="tabpanel"
+            aria-labelledby={tabButtonId(STANDINGS_TABS_ID, tab)}
+            tabIndex={0}
+            className="p-5 sm:p-6"
+          >
             {loading ? (
               <EmptyState message="Loading standings..." />
             ) : error ? (

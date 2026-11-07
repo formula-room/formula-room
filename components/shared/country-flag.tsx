@@ -176,6 +176,20 @@ function BahrainFlag({ className }: SvgProps) {
   );
 }
 
+function MalaysiaFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="24" fill="#F7F7F7" />
+      {Array.from({ length: 7 }, (_, stripe) => (
+        <rect key={stripe} y={(stripe * 24) / 7} width="36" height={12 / 7} fill="#CC0001" />
+      ))}
+      <rect width="18" height={(24 * 8) / 14} fill="#010066" />
+      <path d="M9.6 2.4a4.45 4.45 0 1 0 0 8.9 5.5 5.5 0 0 0 2-.4 3.75 3.75 0 1 1 0-8.1 5.5 5.5 0 0 0-2-.4Z" fill="#FFCC00" />
+      <path d="m13.6 4.5.48 1.46 1.45-.56-.86 1.3 1.33.8-1.55.13.21 1.54-1.06-1.14-1.06 1.14.21-1.54-1.55-.13 1.33-.8-.86-1.3 1.45.56Z" fill="#FFCC00" />
+    </SvgBase>
+  );
+}
+
 function SaudiFlag({ className }: SvgProps) {
   return (
     <SvgBase className={className}>
@@ -415,6 +429,131 @@ function ThailandFlag({ className }: SvgProps) {
   );
 }
 
+function SwitzerlandFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="24" fill="#DA291C" />
+      <rect x="15.5" y="5" width="5" height="14" fill="#F7F7F7" />
+      <rect x="11" y="9.5" width="14" height="5" fill="#F7F7F7" />
+    </SvgBase>
+  );
+}
+
+function SwedenFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="24" fill="#006AA7" />
+      <rect x="10" width="4.6" height="24" fill="#FECC00" />
+      <rect y="9.7" width="36" height="4.6" fill="#FECC00" />
+    </SvgBase>
+  );
+}
+
+function SouthAfricaFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="12" fill="#E03C31" />
+      <rect y="12" width="36" height="12" fill="#001489" />
+      <path d="M0 0 15 12h21M0 24l15-12" fill="none" stroke="#F7F7F7" strokeWidth="8" />
+      <path d="M0 0 15 12h21M0 24l15-12" fill="none" stroke="#007749" strokeWidth="5" />
+      <path d="M0 3.2 11 12 0 20.8Z" fill="#FFB81C" />
+      <path d="M0 5.8 7.8 12 0 18.2Z" fill="#1F1F1F" />
+    </SvgBase>
+  );
+}
+
+function ColombiaFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="12" fill="#FCD116" />
+      <rect y="12" width="36" height="6" fill="#003893" />
+      <rect y="18" width="36" height="6" fill="#CE1126" />
+    </SvgBase>
+  );
+}
+
+function VenezuelaFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="8" fill="#FFCC00" />
+      <rect y="8" width="36" height="8" fill="#00247D" />
+      <rect y="16" width="36" height="8" fill="#CF142B" />
+      <circle cx="11.5" cy="13.4" r="0.8" fill="#F7F7F7" />
+      <circle cx="14.5" cy="11.4" r="0.8" fill="#F7F7F7" />
+      <circle cx="18" cy="10.6" r="0.8" fill="#F7F7F7" />
+      <circle cx="21.5" cy="11.4" r="0.8" fill="#F7F7F7" />
+      <circle cx="24.5" cy="13.4" r="0.8" fill="#F7F7F7" />
+    </SvgBase>
+  );
+}
+
+function UruguayFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="24" fill="#F7F7F7" />
+      <path d="M0 2.67h36v2.67H0ZM0 8h36v2.67H0ZM0 13.33h36V16H0ZM0 18.67h36v2.67H0Z" fill="#0038A8" />
+      <rect width="13.33" height="13.33" fill="#F7F7F7" />
+      <circle cx="6.67" cy="6.67" r="3.2" fill="#FCD116" />
+    </SvgBase>
+  );
+}
+
+function ChileFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="12" fill="#F7F7F7" />
+      <rect y="12" width="36" height="12" fill="#D52B1E" />
+      <rect width="12" height="12" fill="#0039A6" />
+      <path d="M6 2.5 6.8 4.9 9.3 4.9 7.3 6.4 8.1 8.8 6 7.3 3.9 8.8 4.7 6.4 2.7 4.9 5.2 4.9Z" fill="#F7F7F7" />
+    </SvgBase>
+  );
+}
+
+function IndiaFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="8" fill="#FF9933" />
+      <rect y="8" width="36" height="8" fill="#F7F7F7" />
+      <rect y="16" width="36" height="8" fill="#138808" />
+      <circle cx="18" cy="12" r="3" fill="none" stroke="#000080" strokeWidth="0.9" />
+      <circle cx="18" cy="12" r="0.8" fill="#000080" />
+    </SvgBase>
+  );
+}
+
+function LiechtensteinFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="12" fill="#002B7F" />
+      <rect y="12" width="36" height="12" fill="#CE1126" />
+      <path d="M4 8.5 3.5 4.5 6 6.2 7.5 3.5 9 6.2 11.5 4.5 11 8.5Z" fill="#FFD83D" />
+    </SvgBase>
+  );
+}
+
+function CzechRepublicFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="12" fill="#F7F7F7" />
+      <rect y="12" width="36" height="12" fill="#D7141A" />
+      <path d="M0 0 18 12 0 24Z" fill="#11457E" />
+    </SvgBase>
+  );
+}
+
+function ZimbabweFlag({ className }: SvgProps) {
+  return (
+    <SvgBase className={className}>
+      <rect width="36" height="24" fill="#006400" />
+      <rect y="3.43" width="36" height="17.14" fill="#FFD200" />
+      <rect y="6.86" width="36" height="10.28" fill="#D40000" />
+      <rect y="10.29" width="36" height="3.42" fill="#1F1F1F" />
+      <path d="M0 0 15 12 0 24Z" fill="#F7F7F7" stroke="#1F1F1F" strokeWidth="0.8" />
+      <circle cx="5.2" cy="12" r="2.4" fill="#D40000" />
+    </SvgBase>
+  );
+}
+
 const flagComponents: Record<string, React.ComponentType<SvgProps>> = {
   Argentina: ArgentinaFlag,
   Australia: AustraliaFlag,
@@ -424,17 +563,23 @@ const flagComponents: Record<string, React.ComponentType<SvgProps>> = {
   Belgium: BelgiumFlag,
   Brazil: BrazilFlag,
   Canada: CanadaFlag,
+  Chile: ChileFlag,
   China: ChinaFlag,
+  Colombia: ColombiaFlag,
+  "Czech Republic": CzechRepublicFlag,
   Denmark: DenmarkFlag,
   Finland: FinlandFlag,
   France: FranceFlag,
   Germany: GermanyFlag,
   Hungary: HungaryFlag,
+  India: IndiaFlag,
   Indonesia: IndonesiaFlag,
   Ireland: IrelandFlag,
   Italy: ItalyFlag,
   Japan: JapanFlag,
+  Liechtenstein: LiechtensteinFlag,
   Mexico: MexicoFlag,
+  Malaysia: MalaysiaFlag,
   Monaco: MonacoFlag,
   Netherlands: NetherlandsFlag,
   "New Zealand": NewZealandFlag,
@@ -444,14 +589,20 @@ const flagComponents: Record<string, React.ComponentType<SvgProps>> = {
   Russia: RussiaFlag,
   "Saudi Arabia": SaudiFlag,
   Singapore: SingaporeFlag,
+  "South Africa": SouthAfricaFlag,
   Spain: SpainFlag,
+  Sweden: SwedenFlag,
+  Switzerland: SwitzerlandFlag,
   Thailand: ThailandFlag,
   Turkey: TurkeyFlag,
   "Abu Dhabi": AbuDhabiFlag,
   "United Arab Emirates": AbuDhabiFlag,
   "United Kingdom": UnitedKingdomFlag,
   "United States": UnitedStatesFlag,
+  Uruguay: UruguayFlag,
+  Venezuela: VenezuelaFlag,
   Vietnam: VietnamFlag,
+  Zimbabwe: ZimbabweFlag,
 };
 
 function FallbackFlag({ className }: SvgProps) {

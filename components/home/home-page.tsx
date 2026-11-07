@@ -171,7 +171,7 @@ export function HomePageView() {
   );
 
   return (
-    <div className="home-graphite-scope mx-auto flex w-full max-w-[1140px] flex-col gap-5 px-0 pb-20 lg:px-0">
+    <div className="home-graphite-scope mx-auto flex w-full max-w-[1140px] flex-col gap-5 px-0 pb-20 lg:gap-6 lg:px-0">
       <HeroSection />
 
       {error && data === emptyState ? (
@@ -188,9 +188,10 @@ export function HomePageView() {
       {error && data === emptyState ? null : (
         <>
           <ScrollReveal delayMs={240}>
-            <div className="flex flex-col">
+            <div className="home-card flex flex-col rounded-[14px]">
               <CountdownPanel
                 available={nextRaceAvailable}
+                round={data.nextRace.round}
                 flagCountry={data.nextRace.flagCountry}
                 title={data.nextRace.title}
                 location={data.nextRace.location}
@@ -210,18 +211,22 @@ export function HomePageView() {
             </div>
           </ScrollReveal>
 
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
             <ScrollReveal delayMs={240}>
               <LastRaceCard
                 title={data.lastRace.title}
                 circuitName={data.lastRace.circuitName}
-                location={data.lastRace.location}
-                date={data.lastRace.date}
+                flagCountry={data.lastRace.flagCountry}
+                eventHref={data.lastRace.eventHref}
                 podium={data.lastRace.sessions}
               />
             </ScrollReveal>
             <ScrollReveal delayMs={340}>
-              <StandingsTabsCard driverEntries={data.driverStandingsTopThree} teamEntries={data.teamStandingsTopThree} />
+              <StandingsTabsCard
+                seasonLabel={data.seasonLabel}
+                driverEntries={data.driverStandingsTopThree}
+                teamEntries={data.teamStandingsTopThree}
+              />
             </ScrollReveal>
           </div>
 

@@ -94,14 +94,14 @@ export function ScheduleCircuitCard({ circuitId, circuitName, sessions, overview
         className="pt-3"
         trailing={
           tab === "schedule" ? (
-            <div className="mb-2.5 flex rounded-[6px] border border-[var(--color-line2)] bg-[var(--color-bg3)] p-0.5">
+            <div className="mb-2.5 flex rounded-[8px] border border-[var(--color-line2)] bg-[var(--color-bg3)] p-0.5">
               <button
                 type="button"
                 aria-pressed={timeMode === "schedule"}
                 onClick={() => setTimeMode("schedule")}
                 className={cn(
-                  "rounded-[4px] px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.5px] transition-all",
-                  timeMode === "schedule" ? "bg-white text-ink shadow-sm" : "text-ink3 hover:text-ink",
+                  "rounded-[6px] px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.5px] transition-all",
+                  timeMode === "schedule" ? "bg-white text-ink shadow-sm" : "text-ink2 hover:text-ink",
                 )}
               >
                 Schedule
@@ -111,8 +111,8 @@ export function ScheduleCircuitCard({ circuitId, circuitName, sessions, overview
                 aria-pressed={timeMode === "local"}
                 onClick={() => setTimeMode("local")}
                 className={cn(
-                  "rounded-[4px] px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.5px] transition-all",
-                  timeMode === "local" ? "bg-white text-ink shadow-sm" : "text-ink3 hover:text-ink",
+                  "rounded-[6px] px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.5px] transition-all",
+                  timeMode === "local" ? "bg-white text-ink shadow-sm" : "text-ink2 hover:text-ink",
                 )}
               >
                 Local time
@@ -128,11 +128,11 @@ export function ScheduleCircuitCard({ circuitId, circuitName, sessions, overview
         aria-labelledby={tabButtonId(ID_PREFIX, "schedule")}
         hidden={tab !== "schedule"}
         tabIndex={0}
-        className="p-6"
+        className="p-5 sm:p-6"
       >
         {displayedSessions.length ? (
           <div className="flex flex-col gap-4">
-            <div className="flex gap-3 overflow-x-auto pb-1 lg:grid lg:grid-cols-5 lg:overflow-visible">
+            <div className="flex gap-3 overflow-x-auto pb-1 md:grid md:grid-cols-5 md:overflow-visible">
               {displayedSessions.map((session) => {
                 const status = session.status ?? "upcoming";
                 const isNext = status === "upcoming" && displayedSessions.find((s) => (s.status ?? "upcoming") === "upcoming") === session;
@@ -140,17 +140,20 @@ export function ScheduleCircuitCard({ circuitId, circuitName, sessions, overview
                   <div
                     key={`${session.name}-${session.label}`}
                     className={cn(
-                      "flex min-w-[140px] flex-shrink-0 flex-col gap-2.5 rounded-[8px] border px-4 py-3.5 lg:min-w-0",
-                      status === "completed" && "border-[var(--color-line2)] bg-[var(--color-bg2)]",
-                      isNext ? "border-[var(--color-red-border)] bg-[var(--color-red-bg)]" : "border-[var(--color-line2)] bg-white",
+                      "flex min-w-[140px] flex-shrink-0 flex-col gap-2 rounded-[10px] border px-4 py-3.5 md:min-w-0",
+                      isNext
+                        ? "border-[var(--color-red-border)] bg-[var(--color-red-bg)]"
+                        : status === "completed"
+                          ? "border-[var(--color-line2)] bg-[var(--color-bg2)]"
+                          : "border-[var(--color-line2)] bg-white",
                     )}
                   >
-                    <span className="text-[10px] font-medium uppercase tracking-[0.8px] text-ink3">{session.label}</span>
-                    <span className={cn("flex items-center gap-1.5 text-[13px] font-medium", isNext ? "text-[var(--color-red)]" : "text-ink")}>
+                    <span className="text-[11px] font-medium uppercase tracking-[0.8px] text-ink2">{session.label}</span>
+                    <span className={cn("flex items-center gap-1.5 text-[14px] font-semibold", isNext ? "text-[var(--color-red)]" : "text-ink")}>
                       <SessionIcon name={session.name} />
                       {session.name}
                     </span>
-                    <span className="text-[12px] font-semibold tabular-nums text-ink2">{session.time}</span>
+                    <span className="text-[13px] font-medium tabular-nums text-ink2">{session.time}</span>
                   </div>
                 );
               })}
@@ -158,7 +161,7 @@ export function ScheduleCircuitCard({ circuitId, circuitName, sessions, overview
             <div className="flex justify-end">
               <Link
                 href={eventHref ?? "/event"}
-                className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.6px] text-ink3 transition-colors hover:text-[var(--color-red)]"
+                className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.6px] text-ink2 transition-colors hover:text-[var(--color-red)]"
               >
                 View full schedule
                 <ArrowRight className="size-3" aria-hidden="true" />
@@ -166,7 +169,7 @@ export function ScheduleCircuitCard({ circuitId, circuitName, sessions, overview
             </div>
           </div>
         ) : (
-          <p className="text-[13px] text-ink3">Session schedule data is unavailable.</p>
+          <p className="text-[13px] text-ink2">Session schedule data is unavailable.</p>
         )}
       </div>
 
@@ -176,22 +179,22 @@ export function ScheduleCircuitCard({ circuitId, circuitName, sessions, overview
         aria-labelledby={tabButtonId(ID_PREFIX, "circuit")}
         hidden={tab !== "circuit"}
         tabIndex={0}
-        className={cn("grid gap-6 p-6", hasRealOutline && "sm:grid-cols-[1fr_180px]")}
+        className={cn("grid gap-6 p-5 sm:p-6", hasRealOutline && "sm:grid-cols-[1fr_180px]")}
       >
         {circuitFields.length ? (
           <dl className={cn("grid gap-x-6 gap-y-5", hasRealOutline ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4")}>
             {circuitFields.map((field) => (
               <div key={field.label}>
-                <dt className="mb-1.5 text-[10px] font-medium uppercase tracking-[1px] text-ink3">{field.label}</dt>
+                <dt className="mb-1.5 text-[11px] font-medium uppercase tracking-[1px] text-ink2">{field.label}</dt>
                 <dd className="font-display text-[26px] leading-none tracking-[0.5px] text-ink">{field.value}</dd>
               </div>
             ))}
           </dl>
         ) : (
-          <p className="text-[13px] text-ink3">Circuit information is unavailable.</p>
+          <p className="text-[13px] text-ink2">Circuit information is unavailable.</p>
         )}
         {hasRealOutline ? (
-          <div className="hidden items-center justify-center rounded-[8px] border border-[var(--color-line2)] bg-[var(--color-bg)] p-3 sm:flex">
+          <div className="hidden items-center justify-center rounded-[10px] border border-[var(--color-line2)] bg-[var(--color-bg)] p-3 sm:flex">
             <CircuitOutline
               circuitId={circuitId}
               circuitName={circuitName}

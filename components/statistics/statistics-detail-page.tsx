@@ -13,6 +13,7 @@ import {
   premiumSelectContentClass,
   premiumSelectTriggerClass,
 } from "@/components/dashboard/page-primitives";
+import { CountryFlag } from "@/components/shared/country-flag";
 import { Card } from "@/components/ui/card";
 import {
   Select,
@@ -30,6 +31,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+const FLAG_CLASS = "h-[15px] w-[22px] flex-shrink-0 rounded-[2px] border-black/10 shadow-none";
+
 type StatisticsScope = "All-Time" | "Season";
 
 type StatisticsDetailResponse = {
@@ -45,7 +48,7 @@ type StatisticsDetailResponse = {
   rows: Array<{
     slug: string;
     name: string;
-    flag: string;
+    flagCountry: string;
     team: string;
     primaryValue: string;
     starts: string;
@@ -246,12 +249,12 @@ export function StatisticsDetailPageView({
                       <TableCell className="px-5 py-4 text-sm text-ink">
                         {href ? (
                           <Link href={href} className="inline-flex items-center gap-2 hover:text-[var(--color-red)]">
-                            <span>{row.flag}</span>
+                            <CountryFlag country={row.flagCountry} className={FLAG_CLASS} />
                             <span>{row.name}</span>
                           </Link>
                         ) : (
                           <span className="inline-flex items-center gap-2">
-                            <span>{row.flag}</span>
+                            <CountryFlag country={row.flagCountry} className={FLAG_CLASS} />
                             <span>{row.name}</span>
                           </span>
                         )}

@@ -1,18 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Grid2X2, List, Search, X } from "lucide-react";
+import { ArrowRight, Grid2X2, List, type LucideIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { fetchInternalApi } from "@/lib/client/internal-api";
 import { cn } from "@/lib/utils";
 import { statisticsCategories, type StatisticsCategory } from "@/lib/statistics-data";
 import {
+  DashCard,
+  SearchBox,
   premiumSelectContentClass,
   premiumSelectTriggerClass,
 } from "@/components/dashboard/page-primitives";
+import { raceType } from "@/components/home/rank-row";
 import { CategoryIcon } from "@/components/statistics/CategoryIcon";
-import { categoryRgb } from "@/components/statistics/categoryConfig";
 import {
   Select,
   SelectContent,
@@ -46,168 +48,98 @@ function categoryVar(categoryId: string) {
   return `var(--cat-${categoryId}, var(--color-red))`;
 }
 
-function LinkRow({
-  link,
-  categoryId,
-  view,
-  isLast,
-}: {
-  link: { label: string; href: string };
-  categoryId: string;
-  view: ViewMode;
-  isLast: boolean;
-}) {
+function LinkRow({ link, accent }: { link: { label: string; href: string }; accent: string }) {
   return (
     <Link
       href={link.href}
-      className={cn(
-        "flex items-center justify-between border-b border-[var(--color-line)] transition-colors hover:bg-[var(--color-bg)]",
-        view === "grid" ? "px-6 py-3.5" : "px-5 py-3",
-        isLast && view === "grid" && "border-b-0",
-      )}
+      className="group flex items-center gap-3 px-5 py-3 transition-colors hover:bg-[var(--color-bg)] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--color-red)]"
     >
-      <span className="flex min-w-0 items-center gap-2.5">
-        <span
-          className="h-[5px] w-[5px] flex-shrink-0 rounded-full"
-          style={{ backgroundColor: categoryVar(categoryId) }}
-        />
-        <span className="truncate text-[13px] text-ink2 transition-colors group-hover:text-ink">
-          {link.label}
-        </span>
+      <span aria-hidden="true" className="h-3 w-[3px] flex-shrink-0 -skew-x-12 rounded-[1px]" style={{ backgroundColor: accent }} />
+      <span className="min-w-0 flex-1 text-[13px] font-medium leading-snug text-ink transition-colors group-hover:text-[var(--color-red)]">
+        {link.label}
       </span>
-      <span className="ml-4 text-[12px] text-ink3 opacity-0 -translate-x-1 transition-all group-hover:translate-x-0 group-hover:opacity-100">
-        -&gt;
-      </span>
+      <ArrowRight
+        aria-hidden="true"
+        className="h-3.5 w-3.5 flex-shrink-0 text-ink3 transition-all group-hover:translate-x-0.5 group-hover:text-[var(--color-red)]"
+      />
     </Link>
   );
 }
 
-function StatCategoryCard({
-  category,
-  view,
-  index,
-}: {
-  category: StatisticsCategory;
-  view: ViewMode;
-  index: number;
-}) {
+function StatCategoryCard({ category, view }: { category: StatisticsCategory; view: ViewMode }) {
   const categoryId = categoryIdFromTitle(category.title);
   const accent = categoryVar(categoryId);
-  const tint = categoryRgb[categoryId] ?? categoryRgb.championships;
-  const linksLabel = `${category.items.length} ${category.items.length === 1 ? "link" : "links"}`;
-
-  if (view === "list") {
-    return (
-      <article
-        className="group animate-fade-up overflow-hidden rounded-[10px] border border-[var(--color-line2)] bg-white transition-all duration-200 hover:border-[var(--color-line3)]"
-        style={{ animationDelay: `${0.05 + index * 0.03}s` }}
-      >
-        <div
-          className="flex items-center gap-4 border-b border-[var(--color-line)] px-5 py-4"
-          style={{ borderLeft: `3px solid ${accent}` }}
-        >
-          <div
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[7px]"
-            style={{ backgroundColor: `rgba(${tint}, 0.08)` }}
-          >
-            <CategoryIcon
-              categoryId={categoryId}
-              className="h-4 w-4"
-              style={{ color: accent }}
-            />
-          </div>
-          <p className="min-w-0 flex-1 truncate font-display text-[18px] leading-none tracking-[0.5px] text-ink">
-            {category.title}
-          </p>
-          <span className="text-[10px] font-medium uppercase tracking-[1px] text-ink3">
-            {linksLabel}
-          </span>
-          <ArrowUpRight className="h-4 w-4 flex-shrink-0 text-ink3 transition-colors group-hover:text-ink" />
-        </div>
-        <div className="grid sm:grid-cols-2">
-          {category.items.map((link, linkIndex) => (
-            <LinkRow
-              key={`${category.title}-${link.label}-${link.href}`}
-              link={link}
-              categoryId={categoryId}
-              view="list"
-              isLast={linkIndex === category.items.length - 1}
-            />
-          ))}
-        </div>
-      </article>
-    );
-  }
+  const isList = view === "list";
 
   return (
-    <article
-      className="group animate-fade-up cursor-pointer overflow-hidden rounded-[14px] border border-[var(--color-line2)] bg-white transition-all duration-200 hover:-translate-y-[3px] hover:border-[var(--color-line3)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.09)]"
-      style={{ animationDelay: `${0.05 + index * 0.03}s` }}
-    >
-      <div className="h-[3px] w-full" style={{ backgroundColor: accent }} />
-      <div className="flex items-start justify-between border-b border-[var(--color-line)] px-6 py-5">
-        <div className="flex min-w-0 items-center gap-3">
-          <div
-            className="flex h-[38px] w-[38px] flex-shrink-0 items-center justify-center rounded-[9px]"
-            style={{ backgroundColor: `rgba(${tint}, 0.08)` }}
-          >
-            <CategoryIcon
-              categoryId={categoryId}
-              className="h-[18px] w-[18px]"
-              style={{ color: accent }}
-            />
-          </div>
-          <div className="min-w-0">
-            <p className="truncate font-display text-[22px] leading-none tracking-[0.5px] text-ink">
-              {category.title}
-            </p>
+    <DashCard className="flex flex-col">
+      <article>
+        <header className="flex items-center gap-3.5 border-b border-[var(--color-line)] px-5 py-4">
+          <span className="race-black flex h-10 w-11 flex-shrink-0 -skew-x-12 items-center justify-center rounded-[4px]">
+            <CategoryIcon categoryId={categoryId} className="h-[18px] w-[18px] skew-x-12" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h2 className={cn("text-[21px] leading-[1.15] tracking-[0.3px] text-ink", raceType)}>{category.title}</h2>
             <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[1px] text-ink3">
-              {linksLabel}
+              {category.items.length} {category.items.length === 1 ? "link" : "links"}
             </p>
           </div>
-        </div>
-        <div className="mt-0.5 flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-[6px] border border-[var(--color-line2)] text-[13px] text-ink3 transition-all group-hover:border-[var(--color-line3)] group-hover:bg-[var(--color-bg)] group-hover:text-ink">
-          <ArrowUpRight className="h-3.5 w-3.5" />
-        </div>
-      </div>
-      <div className="flex flex-col">
-        {category.items.map((link, linkIndex) => (
-          <LinkRow
-            key={`${category.title}-${link.label}-${link.href}`}
-            link={link}
-            categoryId={categoryId}
-            view="grid"
-            isLast={linkIndex === category.items.length - 1}
-          />
-        ))}
-      </div>
-    </article>
+          <span aria-hidden="true" className="h-8 w-1.5 flex-shrink-0 -skew-x-12 rounded-[1px]" style={{ backgroundColor: accent }} />
+        </header>
+
+        {/* In list view the card's overflow clips the bottom border of the final row. */}
+        <ul className={cn("-mb-px", isList && "grid sm:grid-cols-2")}>
+          {category.items.map((link) => (
+            <li key={`${category.title}-${link.label}-${link.href}`} className={cn("border-b border-[var(--color-line)]", !isList && "last:border-b-0")}>
+              <LinkRow link={link} accent={accent} />
+            </li>
+          ))}
+        </ul>
+      </article>
+    </DashCard>
   );
 }
 
-function EmptyState({
-  search,
-  onClear,
+function ViewButton({
+  label,
+  icon: Icon,
+  active,
+  onClick,
 }: {
-  search: string;
-  onClear: () => void;
+  label: string;
+  icon: LucideIcon;
+  active: boolean;
+  onClick: () => void;
 }) {
   return (
-    <div className="col-span-full flex flex-col items-center gap-4 py-20 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-[16px] border border-[var(--color-line2)] bg-[var(--color-bg2)]">
-        <Search className="h-7 w-7 text-ink3" />
-      </div>
-      <p className="font-display text-[22px] tracking-[0.5px] text-ink2">No results found</p>
-      <p className="max-w-[280px] text-[13px] leading-relaxed text-ink3">
-        No statistics categories match <em>{search ? `"${search}"` : "the current filter"}</em>.
-        Try a different term.
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      aria-pressed={active}
+      className={cn(
+        "flex h-8 w-8 items-center justify-center rounded-[5px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--color-red)]",
+        active ? "race-selected" : "text-ink2 hover:text-ink",
+      )}
+    >
+      <Icon className="h-3.5 w-3.5" />
+    </button>
+  );
+}
+
+function EmptyState({ search, onClear }: { search: string; onClear: () => void }) {
+  return (
+    <div className="col-span-full flex min-h-[220px] flex-col items-center justify-center gap-3 rounded-[12px] border border-dashed border-[var(--color-line2)] bg-[var(--color-bg)] px-6 py-10 text-center">
+      <p className={cn("text-[21px] tracking-[0.3px] text-ink", raceType)}>No results found</p>
+      <p className="max-w-[320px] text-sm leading-6 text-ink2">
+        No statistics categories match <em>&quot;{search}&quot;</em>. Try a different term.
       </p>
       <button
         type="button"
         onClick={onClear}
-        className="mt-1 text-[12px] font-medium text-[var(--color-red)] hover:underline"
+        className="text-[12px] font-medium text-[var(--color-red)] hover:underline"
       >
-        Clear filters
+        Clear search
       </button>
     </div>
   );
@@ -217,7 +149,6 @@ export function StatisticsPageView() {
   const [filterValue, setFilterValue] = useState("All Time");
   const [seasonOptions, setSeasonOptions] = useState<string[]>([]);
   const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All categories");
   const [view, setView] = useState<ViewMode>("grid");
 
   useEffect(() => {
@@ -263,155 +194,75 @@ export function StatisticsPageView() {
     }));
   }, [activeScope, selectedSeason]);
 
-  const categoryPills = useMemo(() => ["All categories", ...categories.map((category) => category.title)], [categories]);
-
   const filteredCategories = useMemo(() => {
     const query = search.trim().toLowerCase();
 
-    return categories.filter((category) => {
-      if (activeCategory !== "All categories" && category.title !== activeCategory) {
-        return false;
-      }
+    if (!query) {
+      return categories;
+    }
 
-      if (!query) {
-        return true;
-      }
-
-      return (
+    return categories.filter(
+      (category) =>
         category.title.toLowerCase().includes(query) ||
-        category.items.some((item) => item.label.toLowerCase().includes(query))
-      );
-    });
-  }, [activeCategory, categories, search]);
+        category.items.some((item) => item.label.toLowerCase().includes(query)),
+    );
+  }, [categories, search]);
 
   return (
-    <div className="mx-auto max-w-[1140px] px-4 py-8 pb-20 sm:px-8 lg:py-10">
-      <section className="mb-8 flex flex-col gap-6 animate-fade-up animate-fade-up-1 lg:flex-row lg:items-end lg:justify-between">
+    <div className="space-y-6">
+      <section className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
-          <div className="mb-2 flex items-center gap-2">
-            <span className="h-px w-5 bg-[var(--color-red)]" />
-            <span className="text-[10px] font-medium uppercase tracking-[1.5px] text-ink3">
-              Stats Library
-            </span>
-          </div>
-          <h1 className="font-display text-[64px] leading-[0.92] tracking-[1px] text-ink">
-            Statistics
-          </h1>
-          <p className="mt-3 max-w-[480px] text-[13px] font-light leading-relaxed text-ink3">
-            Explore every dimension of Formula 1 performance, from championships and wins to lap
-            records, sprint results, and head-to-head matchups.
+          <p className="mb-3 text-[11px] font-medium uppercase tracking-[2px] text-ink3">Stats Library</p>
+          <h1 className="font-display text-[64px] leading-[0.9] tracking-[1px] text-ink sm:text-[78px]">Statistics</h1>
+          <p className="mt-4 max-w-2xl text-sm leading-6 text-ink2">
+            Explore every dimension of Formula 1 performance, from championships and wins to lap records, sprint
+            results, and head-to-head matchups.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <Select value={filterValue} onValueChange={setFilterValue}>
-            <SelectTrigger className={`${premiumSelectTriggerClass} h-10 w-full rounded-[8px] px-4 sm:w-[180px]`}>
-              <SelectValue placeholder="Filter" />
-            </SelectTrigger>
-            <SelectContent className={premiumSelectContentClass}>
-              {statisticsFilterOptions.map((option) => (
-                <SelectItem
-                  key={option}
-                  value={option}
-                  className="focus:bg-[var(--color-bg)] focus:text-ink"
-                >
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <Select value={filterValue} onValueChange={setFilterValue}>
+          <SelectTrigger aria-label="Season" className={`${premiumSelectTriggerClass} w-full sm:w-[180px]`}>
+            <SelectValue placeholder="Filter" />
+          </SelectTrigger>
+          <SelectContent className={premiumSelectContentClass}>
+            {statisticsFilterOptions.map((option) => (
+              <SelectItem key={option} value={option} className="focus:bg-[var(--color-bg)] focus:text-ink">
+                {option === "All Time" ? option : `Season ${option}`}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </section>
 
-          <div className="flex rounded-[8px] border border-[var(--color-line2)] bg-white p-[3px]">
-            <button
-              type="button"
-              onClick={() => setView("grid")}
-              aria-label="Grid view"
-              className={cn(
-                "flex h-[30px] w-[30px] items-center justify-center rounded-[5px] transition-all",
-                view === "grid" ? "bg-[var(--color-bg2)] text-ink" : "text-ink3 hover:text-ink2",
-              )}
-            >
-              <Grid2X2 className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setView("list")}
-              aria-label="List view"
-              className={cn(
-                "flex h-[30px] w-[30px] items-center justify-center rounded-[5px] transition-all",
-                view === "list" ? "bg-[var(--color-bg2)] text-ink" : "text-ink3 hover:text-ink2",
-              )}
-            >
-              <List className="h-3.5 w-3.5" />
-            </button>
+      <DashCard>
+        <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-xs text-ink3">
+            {filteredCategories.length} {filteredCategories.length === 1 ? "category" : "categories"}
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="min-w-0 flex-1 sm:flex-none">
+              <SearchBox
+                value={search}
+                onChange={setSearch}
+                onClear={() => setSearch("")}
+                placeholder="Search statistics"
+              />
+            </div>
+            <div className="flex flex-shrink-0 gap-0.5 rounded-[8px] border border-[var(--color-line2)] bg-white p-[3px]">
+              <ViewButton label="Grid view" icon={Grid2X2} active={view === "grid"} onClick={() => setView("grid")} />
+              <ViewButton label="List view" icon={List} active={view === "list"} onClick={() => setView("list")} />
+            </div>
           </div>
         </div>
-      </section>
+      </DashCard>
 
-      <section className="mb-6 animate-fade-up animate-fade-up-2">
-        <div className="flex max-w-[420px] items-center gap-2.5 rounded-[10px] border border-[var(--color-line2)] bg-white px-4 py-3 transition-colors focus-within:border-[var(--color-line3)]">
-          <Search className="h-4 w-4 flex-shrink-0 text-ink3" />
-          <input
-            type="text"
-            placeholder="Search statistics..."
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            className="min-w-0 flex-1 border-none bg-transparent text-[13px] text-ink outline-none placeholder:text-ink3"
-          />
-          {search ? (
-            <button
-              type="button"
-              onClick={() => setSearch("")}
-              aria-label="Clear search"
-              className="text-ink3 transition-colors hover:text-ink"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          ) : null}
-        </div>
-      </section>
-
-      <section className="mb-8 flex flex-wrap gap-2 animate-fade-up animate-fade-up-3">
-        {categoryPills.map((category) => (
-          <button
-            key={category}
-            type="button"
-            onClick={() => setActiveCategory(category)}
-            className={cn(
-              "whitespace-nowrap rounded-full border px-4 py-2 text-[11px] font-medium uppercase tracking-[0.5px] transition-all",
-              activeCategory === category
-                ? "border-ink bg-ink text-white"
-                : "border-[var(--color-line2)] bg-white text-ink3 hover:border-[var(--color-line3)] hover:text-ink2",
-            )}
-          >
-            {category}
-          </button>
-        ))}
-      </section>
-
-      <section
-        className={cn(
-          "animate-fade-up animate-fade-up-4",
-          view === "grid" ? "grid gap-5 md:grid-cols-2 xl:grid-cols-3" : "flex flex-col gap-3",
-        )}
-      >
+      <section className={cn(view === "grid" ? "grid gap-5 md:grid-cols-2 xl:grid-cols-3" : "flex flex-col gap-3")}>
         {filteredCategories.length ? (
-          filteredCategories.map((category, index) => (
-            <StatCategoryCard
-              key={category.title}
-              category={category}
-              view={view}
-              index={index}
-            />
+          filteredCategories.map((category) => (
+            <StatCategoryCard key={category.title} category={category} view={view} />
           ))
         ) : (
-          <EmptyState
-            search={search}
-            onClear={() => {
-              setSearch("");
-              setActiveCategory("All categories");
-            }}
-          />
+          <EmptyState search={search} onClear={() => setSearch("")} />
         )}
       </section>
     </div>

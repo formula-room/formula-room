@@ -2,7 +2,8 @@ import "server-only";
 
 import { asc, eq } from "drizzle-orm";
 
-import { getConstructorTheme, getDriverRouteSlug, getFlagEmoji, formatOrdinal, formatPoints, isDnfStatus } from "@/lib/f1/presentation";
+import { normalizeCountryFlagKey } from "@/lib/f1/flag-country";
+import { getConstructorTheme, getDriverRouteSlug, formatOrdinal, formatPoints, isDnfStatus } from "@/lib/f1/presentation";
 import { getDatabase } from "@/lib/db/client";
 import { constructors, driverSeasonStandings, drivers, raceResults, races, sprintResults } from "@/lib/db/schema";
 import { getSeasonsList } from "@/lib/server/queries/seasons";
@@ -21,7 +22,7 @@ export type StatisticsDetailSlug =
 type StatisticRow = {
   slug: string;
   name: string;
-  flag: string;
+  flagCountry: string;
   team: string;
   primaryValue: string;
   starts: string;
@@ -48,7 +49,7 @@ type StatisticsDetailData = {
 type DriverAggregate = {
   driverId: string;
   name: string;
-  flag: string;
+  flagCountry: string;
   latestTeam: string;
   starts: number;
   wins: number;
@@ -248,7 +249,7 @@ export async function getStatisticsDetailPageData(
     const aggregate = aggregateMap.get(row.driverId) ?? {
       driverId: row.driverId,
       name: fullName,
-      flag: getFlagEmoji(row.nationality),
+      flagCountry: normalizeCountryFlagKey(row.nationality),
       latestTeam: getConstructorTheme(row.constructorId, row.constructorName).displayName,
       starts: 0,
       wins: 0,
@@ -286,7 +287,7 @@ export async function getStatisticsDetailPageData(
     const aggregate = aggregateMap.get(row.driverId) ?? {
       driverId: row.driverId,
       name: `${row.givenName} ${row.familyName}`,
-      flag: getFlagEmoji(row.nationality),
+      flagCountry: normalizeCountryFlagKey(row.nationality),
       latestTeam: getConstructorTheme(row.constructorId, row.constructorName).displayName,
       starts: 0,
       wins: 0,
@@ -334,7 +335,7 @@ export async function getStatisticsDetailPageData(
         .map((aggregate) => ({
           slug: getDriverRouteSlug(aggregate.driverId, aggregate.name),
           name: aggregate.name,
-          flag: aggregate.flag,
+          flagCountry: aggregate.flagCountry,
           team: aggregate.latestTeam,
           primaryValue: String(metric(aggregate)),
           starts: String(aggregate.starts),

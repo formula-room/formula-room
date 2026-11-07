@@ -81,11 +81,20 @@ function NavItems({ mobile = false }: { mobile?: boolean }) {
             key={route.href}
             href={route.href}
             className={cn(
-              "flex h-[60px] items-center border-b-2 border-transparent px-4 text-[11px] font-medium uppercase tracking-[0.9px] text-[rgba(255,255,255,0.42)] transition-colors hover:text-white",
-              mobile && "h-auto rounded-[8px] border border-[rgba(255,255,255,0.12)] px-4 py-3",
-              isActive
-                ? "border-[var(--color-red)] text-white"
-                : "text-[rgba(255,255,255,0.42)]"
+              "flex items-center font-medium uppercase transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--color-red)]",
+              mobile
+                ? cn(
+                    "rounded-[8px] border px-4 py-3 text-[13px] tracking-[0.8px]",
+                    isActive
+                      ? "border-[var(--color-red-border)] bg-[var(--color-red-bg)] text-[var(--color-red)]"
+                      : "border-[var(--color-line2)] text-ink2 hover:text-ink",
+                  )
+                : cn(
+                    "h-[60px] border-b-2 px-[18px] text-[12px] tracking-[1px]",
+                    isActive
+                      ? "border-[var(--color-red)] text-white"
+                      : "border-transparent text-[rgba(255,255,255,0.72)] hover:text-white",
+                  ),
             )}
           >
             {route.title}
@@ -127,23 +136,24 @@ export function DashboardShell({ children }: DashboardShellProps) {
             <NavItems />
           </div>
 
-          <div className="flex items-center gap-5 justify-self-end min-[1180px]:min-w-[140px] min-[1180px]:justify-end">
+          <div className="col-start-3 flex items-center gap-5 justify-self-end min-[1180px]:min-w-[140px] min-[1180px]:justify-end">
             <HeaderSocialLinks />
             <Sheet>
               <SheetTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-[6px] border border-[rgba(255,255,255,0.12)] bg-white/5 text-[rgba(255,255,255,0.42)] hover:bg-white/10 hover:text-white min-[1180px]:hidden"
+                  aria-label="Open navigation"
+                  className="rounded-[8px] border border-[rgba(255,255,255,0.14)] bg-white/5 text-[rgba(255,255,255,0.72)] hover:bg-white/10 hover:text-white min-[1180px]:hidden"
                 >
                   <Menu className="size-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent className="border-[var(--color-line2)] bg-[var(--color-bg)] text-ink">
+              <SheetContent className="z-[310] border-[var(--color-line2)] bg-[var(--color-bg)] text-ink">
                 <SheetHeader>
                   <SheetTitle className="font-display text-2xl tracking-[1px] text-ink">Navigation</SheetTitle>
                 </SheetHeader>
-                <div className="mt-6">
+                <div className="mt-2 px-4">
                   <NavItems mobile />
                 </div>
               </SheetContent>

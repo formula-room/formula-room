@@ -14,10 +14,10 @@ function formatNewsDate(iso: string) {
 }
 
 const WRAPPER_CLASSES =
-  "group relative isolate z-0 block h-full rounded-[12px] hover:z-10 focus-visible:z-10 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-red)] focus-visible:ring-offset-2";
+  "group relative isolate z-0 block h-full rounded-[10px] hover:z-10 focus-visible:z-10 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-red)] focus-visible:ring-offset-2";
 
 const INNER_CLASSES =
-  "flex h-full flex-col overflow-hidden rounded-[12px] border border-[var(--color-line2)] bg-white transition-transform duration-[280ms] ease-out group-hover:-translate-y-1.5 group-focus-visible:-translate-y-1.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-focus-visible:translate-y-0";
+  "flex h-full flex-col overflow-hidden rounded-[10px] border border-[var(--color-line2)] bg-white transition-[transform,box-shadow] duration-[280ms] ease-out group-hover:-translate-y-1.5 group-hover:shadow-[0_10px_24px_rgba(23,20,15,0.10)] group-focus-visible:-translate-y-1.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-focus-visible:translate-y-0";
 
 function NewsCard({ article }: { article: NewsArticleView }) {
   const [imageFailed, setImageFailed] = useState(false);
@@ -27,7 +27,7 @@ function NewsCard({ article }: { article: NewsArticleView }) {
   const inner = (
     <div className={INNER_CLASSES}>
       <div
-        className="relative aspect-[16/10] w-full shrink-0 overflow-hidden"
+        className="relative aspect-[16/9] w-full shrink-0 overflow-hidden border-b border-[var(--color-line)]"
         style={{ background: `linear-gradient(135deg, ${article.teamColor ?? "#17140F"}33, #17140F)` }}
       >
         {showImage ? (
@@ -41,12 +41,10 @@ function NewsCard({ article }: { article: NewsArticleView }) {
           />
         ) : null}
       </div>
-      <div className="flex flex-1 flex-col gap-2 px-5 py-4">
-        {tag ? (
-          <span className="text-[10px] font-semibold uppercase tracking-[0.8px] text-[var(--color-red)]">{tag}</span>
-        ) : null}
-        <h3 className="line-clamp-2 min-h-[2.6em] text-[15px] font-medium leading-snug text-ink">{article.headline}</h3>
-        <p className="text-[11px] text-ink3">{formatNewsDate(article.publishedAt)}</p>
+      <div className="flex flex-1 flex-col gap-2 p-5">
+        <span className="min-h-4 text-[11px] font-semibold uppercase leading-4 tracking-[1px] text-[var(--color-red)]">{tag}</span>
+        <h3 className="line-clamp-3 text-[16px] font-semibold leading-[1.35] tracking-[-0.01em] text-ink">{article.headline}</h3>
+        <p className="mt-auto pt-2 text-[12px] text-ink2">{formatNewsDate(article.publishedAt)}</p>
       </div>
     </div>
   );
@@ -128,28 +126,28 @@ export function NewsGrid({ articles }: { articles: NewsArticleView[] }) {
 
   return (
     <ScrollReveal delayMs={240} onReveal={() => setContainerRevealed(true)}>
-    <section className="overflow-hidden rounded-[14px] border border-[var(--color-line2)] bg-white">
+    <section className="home-card overflow-hidden rounded-[14px] border border-[var(--color-line2)] bg-white">
       <div className="h-[2px] bg-gradient-to-r from-transparent via-[var(--color-red)] to-transparent opacity-70" />
-      <div className="flex items-center justify-between gap-4 border-b border-[var(--color-line)] px-6 py-5">
-        <h2 className="font-display text-[22px] leading-none tracking-[1px] text-ink">Latest News</h2>
+      <div className="flex items-center justify-between gap-4 border-b border-[var(--color-line)] px-5 py-5 sm:px-6">
+        <h2 className="font-display text-[24px] leading-none tracking-[1px] text-ink">Latest News</h2>
         <Link href="/news" className="text-[12px] font-medium text-[var(--color-red)] transition-colors hover:underline">
           View all news →
         </Link>
       </div>
 
-      <div className="flex items-center gap-2 px-3 py-5 sm:gap-4 sm:px-4">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-4 p-4 sm:gap-x-3 sm:py-5">
         <button
           type="button"
           onClick={() => goTo(page - 1)}
           disabled={page === 0}
           aria-label="Previous articles"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--color-line2)] bg-white text-ink transition-colors hover:border-[var(--color-red)] hover:text-[var(--color-red)] disabled:cursor-not-allowed disabled:opacity-30"
+          className="col-start-1 row-start-2 flex h-9 w-9 shrink-0 sm:row-start-1 items-center justify-center rounded-full border border-[var(--color-line2)] bg-white text-ink transition-colors hover:border-[var(--color-red)] hover:text-[var(--color-red)] disabled:cursor-not-allowed disabled:opacity-30"
         >
           <ChevronLeft className="size-4" />
         </button>
 
         <div
-          className="min-w-0 flex-1 overflow-hidden pt-[10px]"
+          className="col-span-3 col-start-1 row-start-1 min-w-0 overflow-hidden pt-[10px] sm:col-span-1 sm:col-start-2"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -158,7 +156,7 @@ export function NewsGrid({ articles }: { articles: NewsArticleView[] }) {
             style={{ transform: `translateX(-${page * 100}%)` }}
           >
             {pages.map((pageArticles, pageIndex) => (
-              <div key={pageIndex} className={cn("grid w-full shrink-0 grid-flow-row gap-4 px-2", gridColsClass)}>
+              <div key={pageIndex} className={cn("grid w-full shrink-0 grid-flow-row gap-5 px-0 sm:px-2", gridColsClass)}>
                 {pageArticles.map((article, articleIndex) => (
                   <ScrollReveal key={`${article.id}-${containerRevealed}`} delayMs={240 + articleIndex * 90} disabled={!containerRevealed}>
                     <NewsCard article={article} />
@@ -174,14 +172,13 @@ export function NewsGrid({ articles }: { articles: NewsArticleView[] }) {
           onClick={() => goTo(page + 1)}
           disabled={page === pages.length - 1}
           aria-label="Next articles"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--color-line2)] bg-white text-ink transition-colors hover:border-[var(--color-red)] hover:text-[var(--color-red)] disabled:cursor-not-allowed disabled:opacity-30"
+          className="col-start-3 row-start-2 flex h-9 w-9 shrink-0 sm:row-start-1 items-center justify-center rounded-full border border-[var(--color-line2)] bg-white text-ink transition-colors hover:border-[var(--color-red)] hover:text-[var(--color-red)] disabled:cursor-not-allowed disabled:opacity-30"
         >
           <ChevronRight className="size-4" />
         </button>
-      </div>
 
       {pages.length > 1 ? (
-        <div className="flex items-center justify-center gap-1.5 pb-5">
+        <div className="col-start-2 row-start-2 flex items-center justify-center gap-1.5 sm:col-span-3 sm:col-start-1">
           {pages.map((_, index) => (
             <button
               key={index}
@@ -196,6 +193,7 @@ export function NewsGrid({ articles }: { articles: NewsArticleView[] }) {
           ))}
         </div>
       ) : null}
+      </div>
     </section>
     </ScrollReveal>
   );

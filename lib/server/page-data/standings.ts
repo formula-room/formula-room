@@ -3,7 +3,7 @@ import "server-only";
 import { asc, eq } from "drizzle-orm";
 
 import { normalizeCountryFlagKey } from "@/lib/f1/flag-country";
-import { getConstructorRouteSlug, getConstructorTheme, getDriverRouteSlug, getFlagEmoji, formatPoints } from "@/lib/f1/presentation";
+import { getConstructorRouteSlug, getConstructorTheme, getDriverRouteSlug, getFlagEmoji, formatPoints, getTeamColor } from "@/lib/f1/presentation";
 import { getDatabase } from "@/lib/db/client";
 import { constructorSeasonStandings, constructors, driverSeasonStandings, drivers, raceResults, races, sprintResults } from "@/lib/db/schema";
 import { getSeasonsList } from "@/lib/server/queries/seasons";
@@ -148,7 +148,7 @@ export async function getStandingsPageData(seasonYear: number) {
       flag: getFlagEmoji(row.driverNationality),
       flagCountry: normalizeCountryFlagKey(row.driverNationality),
       team: teamName,
-      teamColor: constructorTheme.teamColor,
+      teamColor: getTeamColor(row.constructorId, row.constructorName),
       points: 0,
       wins: 0,
       podiums: 0,
@@ -159,12 +159,12 @@ export async function getStandingsPageData(seasonYear: number) {
 
     driverStanding.points += points;
     driverStanding.wins += row.session === "race" && row.position === 1 ? 1 : 0;
-    driverStanding.podiums += row.position !== null && row.position <= 3 ? 1 : 0;
+    driverStanding.podiums += row.session === "race" && row.position !== null && row.position <= 3 ? 1 : 0;
     driverStanding.constructorNames.add(teamName);
 
     if (row.round >= driverStanding.latestRound) {
       driverStanding.team = teamName;
-      driverStanding.teamColor = constructorTheme.teamColor;
+      driverStanding.teamColor = getTeamColor(row.constructorId, row.constructorName);
       driverStanding.latestRound = row.round;
     }
 
@@ -173,7 +173,7 @@ export async function getStandingsPageData(seasonYear: number) {
     const teamStanding = teamMap.get(row.constructorId) ?? {
       team: teamName,
       slug: getConstructorRouteSlug(row.constructorId, teamName),
-      teamColor: constructorTheme.teamColor,
+      teamColor: getTeamColor(row.constructorId, row.constructorName),
       points: 0,
       wins: 0,
       podiums: 0,
@@ -181,7 +181,7 @@ export async function getStandingsPageData(seasonYear: number) {
 
     teamStanding.points += points;
     teamStanding.wins += row.session === "race" && row.position === 1 ? 1 : 0;
-    teamStanding.podiums += row.position !== null && row.position <= 3 ? 1 : 0;
+    teamStanding.podiums += row.session === "race" && row.position !== null && row.position <= 3 ? 1 : 0;
     teamMap.set(row.constructorId, teamStanding);
   }
 
@@ -257,7 +257,7 @@ export async function getStandingsPageData(seasonYear: number) {
           slug: getConstructorRouteSlug(row.constructorId, constructorTheme.displayName),
           position: formatStandingPosition(row.position),
           team: constructorTheme.displayName,
-          teamColor: constructorTheme.teamColor,
+          teamColor: getTeamColor(row.constructorId, row.constructorName),
           points: formatPoints(Number(row.points)),
           wins: row.wins,
           podiums: fallback?.podiums ?? 0,

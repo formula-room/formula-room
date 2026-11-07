@@ -176,6 +176,7 @@ const DRIVER_NUMBERS: Record<string, string> = {
 
 const FLAG_BY_NATIONALITY: Record<string, string> = {
   australia: "🇦🇺",
+  malaysia: "🇲🇾",
   austrian: "🇦🇹",
   belgian: "🇧🇪",
   brazilian: "🇧🇷",
@@ -267,6 +268,11 @@ export function getConstructorTheme(constructorId: string, name: string) {
     firstSeason: theme?.firstSeason,
     activeYears: theme?.activeYears,
   };
+}
+
+/** The colour for a team on the homepage, Full Standings and event results rows. */
+export function getTeamColor(constructorId: string, name: string) {
+  return getConstructorTheme(constructorId, name).accent;
 }
 
 export function getReadableTextColor(hex: string) {
