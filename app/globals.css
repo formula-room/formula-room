@@ -556,3 +556,13 @@
   background: #000000;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
+
+/* Homepage hero and weekend schedule: full window width from inside the centred page column. */
+.fr-hero,
+.fr-bleed {
+  width: calc(100vw - var(--fr-scrollbar, 0px));
+  margin-inline: calc(50% - (100vw - var(--fr-scrollbar, 0px)) / 2);
+}
+body:has(.fr-hero) {
+  overflow-x: clip;
+}

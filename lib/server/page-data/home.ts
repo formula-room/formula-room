@@ -17,6 +17,7 @@ import {
   getTeamColor,
   formatPoints,
 } from "@/lib/f1/presentation";
+import { getCircuitTimeZone } from "@/lib/f1/circuit-timezones";
 import { resolveRaceFlagCountry } from "@/lib/f1/flag-country";
 import { getCircuitRouteSlug } from "@/lib/f1/presentation";
 import circuitFeatures from "@/lib/data/f1-circuits.json";
@@ -44,6 +45,7 @@ type HomeRaceCardData = {
   location: string;
   circuitId: string;
   circuitName: string;
+  timeZone?: string;
   eventHref: string | null;
   circuitHref: string | null;
   round: string;
@@ -297,6 +299,7 @@ async function getRaceByDateBoundary(direction: "next" | "last") {
       circuitName: circuits.name,
       country: circuits.country,
       locality: circuits.locality,
+      lng: circuits.lng,
     })
     .from(races)
     .innerJoin(circuits, eq(races.circuitId, circuits.circuitId));
@@ -399,6 +402,7 @@ export async function getHomePageData() {
         location: `${nextRace.locality}, ${nextRace.country}`,
         circuitId: nextRace.circuitId,
         circuitName: nextRace.circuitName,
+        timeZone: getCircuitTimeZone(nextRace.circuitId, nextRace.lng),
         eventHref: `/event/${nextRace.slug}`,
         circuitHref: `/circuit/${getCircuitRouteSlug(nextRace.circuitId, nextRace.circuitName)}`,
         round: String(nextRace.round).padStart(2, "0"),

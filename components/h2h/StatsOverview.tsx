@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import type { DriverProfile } from "@/lib/head-to-head-data";
 import { cn } from "@/lib/utils";
-import { raceType } from "@/components/home/rank-row";
+import { uprightRaceType } from "@/components/home/rank-row";
 import { TeamLogo } from "@/components/home/team-logo";
 
 export type Summary = {
@@ -36,8 +36,8 @@ function DuelName({ name }: { name: string }) {
 
   return (
     <span className="block min-w-0 flex-1 text-ink">
-      {given ? <span className={cn("block truncate pr-1 text-[12px] leading-[1.35] tracking-[0.3px] text-ink2", raceType)}>{given}</span> : null}
-      <span className={cn("block truncate pr-1.5 text-[23px] leading-[1.25] tracking-[0.3px] sm:text-[26px]", raceType)}>{family}</span>
+      {given ? <span className={cn("block truncate pr-1 text-[12px] leading-[1.35] tracking-[0.3px] text-ink2", uprightRaceType)}>{given}</span> : null}
+      <span className={cn("block truncate pr-1.5 text-[23px] leading-[1.25] tracking-[0.3px] sm:text-[26px]", uprightRaceType)}>{family}</span>
     </span>
   );
 }
@@ -46,9 +46,9 @@ function DuelStrip({ side, driver, team }: { side: Side; driver: DriverProfile; 
   const isA = side === "A";
 
   return (
-    <div className={cn("race-strip flex h-[66px] min-w-0 flex-1 -skew-x-12 items-stretch overflow-hidden rounded-[3px]", !isA && "flex-row-reverse")}>
+    <div className={cn("race-strip flex h-[66px] min-w-0 flex-1 items-stretch overflow-hidden rounded-[3px]", !isA && "flex-row-reverse")}>
       <div className="w-2 flex-shrink-0" style={{ backgroundColor: isA ? "var(--h2h-a)" : "var(--h2h-b)" }} />
-      <div className={cn("flex min-w-0 flex-1 skew-x-12 items-center gap-3 px-4 sm:px-5", !isA && "flex-row-reverse text-right")}>
+      <div className={cn("flex min-w-0 flex-1 items-center gap-3 px-4 sm:px-5", !isA && "flex-row-reverse text-right")}>
         <DuelName name={driver.name} />
         {team ? <TeamLogo team={team} /> : null}
       </div>
@@ -72,7 +72,7 @@ export function DuelHeader({
   return (
     <div className="grid items-center gap-2 px-1.5 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-4">
       <DuelStrip side="A" driver={driverA} team={teamA} />
-      <span aria-hidden="true" className={cn("justify-self-center text-[20px] leading-none tracking-[0.5px] text-ink2", raceType)}>VS</span>
+      <span aria-hidden="true" className={cn("justify-self-center text-[20px] leading-none tracking-[0.5px] text-ink2", uprightRaceType)}>VS</span>
       <DuelStrip side="B" driver={driverB} team={teamB} />
     </div>
   );
@@ -105,12 +105,12 @@ function ValueCell({
       )}
     >
       {stripe}
-      <span className="flex min-w-0 flex-1 skew-x-12 items-center justify-center px-1 text-center">
+      <span className="flex min-w-0 flex-1 items-center justify-center px-1 text-center">
         <span
           className={cn(
             small
               ? "line-clamp-2 break-words text-[10px] font-semibold leading-[1.15]"
-              : cn("whitespace-nowrap text-[18px] leading-none tracking-[0.4px] max-[359px]:text-[16px] sm:text-[23px]", raceType),
+              : cn("whitespace-nowrap text-[18px] leading-none tracking-[0.4px] max-[359px]:text-[16px] sm:text-[23px]", uprightRaceType),
           )}
         >
           {value}
@@ -120,7 +120,7 @@ function ValueCell({
   );
 }
 
-/** Angled row: Driver A's value, what is being compared, Driver B's value. The leader's cell turns black. */
+/** Comparison row: Driver A's value, what is being compared, Driver B's value. The leader's cell turns black. */
 export function ComparisonRow({
   valueA,
   valueB,
@@ -142,9 +142,9 @@ export function ComparisonRow({
   children: ReactNode;
 }) {
   return (
-    <li className={cn("race-strip flex min-w-0 -skew-x-12 items-stretch overflow-hidden rounded-[3px]", className)}>
+    <li className={cn("race-strip flex min-w-0 items-stretch overflow-hidden rounded-[3px]", className)}>
       <ValueCell side="A" value={valueA} leads={leader === "A"} small={smallA} title={smallA ? valueA : undefined} />
-      <div className="flex min-w-0 flex-1 skew-x-12 flex-col items-center justify-center px-2 py-1.5 text-center sm:px-3">
+      <div className="flex min-w-0 flex-1 flex-col items-center justify-center px-2 py-1.5 text-center sm:px-3">
         {children}
         {leaderName ? <span className="sr-only">Ahead: {leaderName}</span> : null}
       </div>

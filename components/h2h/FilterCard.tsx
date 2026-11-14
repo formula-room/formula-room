@@ -22,7 +22,7 @@ import {
   premiumSelectContentClass,
   premiumSelectTriggerClass,
 } from "@/components/dashboard/page-primitives";
-import { raceType } from "@/components/home/rank-row";
+import { uprightRaceType } from "@/components/home/rank-row";
 import {
   Select,
   SelectContent,
@@ -103,8 +103,8 @@ function DriverSelect({
 
   return (
     <div className="min-w-0">
-      <div className="race-black mb-2.5 ml-1 flex w-fit -skew-x-12 items-stretch overflow-hidden rounded-[3px]">
-        <span className={cn("skew-x-12 px-4 py-1 text-[15px] leading-[1.35] tracking-[0.3px]", raceType)}>{label}</span>
+      <div className="race-black mb-2.5 ml-1 flex w-fit items-stretch overflow-hidden rounded-[3px]">
+        <span className={cn("px-4 py-1 text-[15px] leading-[1.35] tracking-[0.3px]", uprightRaceType)}>{label}</span>
         <span aria-hidden="true" className="w-2" style={{ backgroundColor: `var(--h2h-${side})` }} />
       </div>
       <DriverPicker
@@ -168,9 +168,9 @@ export function FilterCard({
 
         <div
           aria-hidden="true"
-          className="flex h-8 w-12 -skew-x-12 items-center justify-center justify-self-center rounded-[4px] bg-[var(--color-bg2)] sm:h-11 sm:self-end"
+          className="flex h-8 w-12 items-center justify-center justify-self-center rounded-[4px] bg-[var(--color-bg2)] sm:h-11 sm:self-end"
         >
-          <span className={cn("skew-x-12 text-[17px] leading-none tracking-[0.5px] text-ink2", raceType)}>VS</span>
+          <span className={cn("text-[17px] leading-none tracking-[0.5px] text-ink2", uprightRaceType)}>VS</span>
         </div>
 
         <DriverSelect
@@ -188,12 +188,12 @@ export function FilterCard({
           aria-expanded={filtersOpen}
           aria-controls={panelId}
           onClick={() => setFiltersOpen((open) => !open)}
-          className="flex items-center gap-2.5 rounded-[4px] text-[14px] font-bold italic text-ink transition-colors hover:text-[var(--color-red)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-red)]"
+          className="flex items-center gap-2.5 rounded-[4px] text-[14px] font-bold text-ink transition-colors hover:text-[var(--color-red)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-red)]"
         >
           <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
           Advanced Filters
           {changedFilters > 0 ? (
-            <span className="race-selected flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1 text-[10px] not-italic">
+            <span className="race-selected flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1 text-[10px]">
               {changedFilters}
               <span className="sr-only"> changed</span>
             </span>
@@ -214,9 +214,9 @@ export function FilterCard({
               setTriedEmpty(!canCompare);
               if (canCompare) onCompare();
             }}
-            className="race-selected flex h-11 -skew-x-12 items-center rounded-[5px] px-4 transition-[filter] hover:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-red)] sm:px-6"
+            className="race-selected flex h-11 items-center rounded-[5px] px-4 transition-[filter] hover:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-red)] sm:px-6"
           >
-            <span className="flex skew-x-12 items-center gap-2 text-[14px] font-bold italic">
+            <span className="flex items-center gap-2 text-[14px] font-bold">
               Compare
               <ArrowRight aria-hidden="true" className="h-4 w-4" />
             </span>

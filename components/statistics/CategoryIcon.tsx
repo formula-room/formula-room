@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 /* Lucide has no chequered flag. Squares fall on the 24-unit grid so they stay crisp at small sizes. */
-function ChequeredFlag({ className, style }: { className?: string; style?: CSSProperties }) {
+export function ChequeredFlag({ className, style }: { className?: string; style?: CSSProperties }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className} style={style}>
       <path d="M4 2v20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />

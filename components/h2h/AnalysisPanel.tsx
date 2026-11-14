@@ -14,7 +14,7 @@ import {
   premiumTabsListClass,
   premiumTabsTriggerClass,
 } from "@/components/dashboard/page-primitives";
-import { raceType } from "@/components/home/rank-row";
+import { uprightRaceType } from "@/components/home/rank-row";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ComparisonRow,
@@ -63,9 +63,9 @@ function latestTeam(meetings: ApiMeeting[], side: Side) {
   return side === "A" ? meeting?.resultA.team : meeting?.resultB.team;
 }
 
-/** Faint angled squares in opposite corners, echoing a chequered flag. */
+/** Faint squares in opposite corners, echoing a chequered flag. */
 function CornerChecks({ className }: { className: string }) {
-  const square = "absolute h-9 w-12 -skew-x-[24deg] bg-[var(--color-bg)]";
+  const square = "absolute h-9 w-12 bg-[var(--color-bg)]";
 
   return (
     <div aria-hidden="true" className={cn("pointer-events-none absolute hidden h-[72px] w-[160px] md:block", className)}>
@@ -85,7 +85,7 @@ export function ReadyToCompare() {
         <div className="flex h-14 w-14 items-center justify-center rounded-[12px] bg-[var(--color-bg2)]">
           <Users aria-hidden="true" className="h-6 w-6 text-ink2" />
         </div>
-        <h2 className={cn("mt-5 text-[30px] leading-[1.15] tracking-[0.3px] text-ink", raceType)}>Ready to Compare</h2>
+        <h2 className={cn("mt-5 text-[30px] leading-[1.15] tracking-[0.3px] text-ink", uprightRaceType)}>Ready to Compare</h2>
         <p className="mt-2 max-w-[340px] text-sm leading-6 text-ink2">
           Select two drivers to explore their racing statistics and head-to-head results.
         </p>
@@ -98,7 +98,7 @@ export function PanelMessage({ title, children, tone }: { title: string; childre
   return (
     <DashCard>
       <div role="status" className="flex flex-col items-center px-6 py-12 text-center">
-        <p className={cn("text-[22px] leading-[1.2] tracking-[0.3px]", tone === "error" ? "text-[var(--color-red)]" : "text-ink", raceType)}>{title}</p>
+        <p className={cn("text-[22px] leading-[1.2] tracking-[0.3px]", tone === "error" ? "text-[var(--color-red)]" : "text-ink", uprightRaceType)}>{title}</p>
         {children ? <p className="mt-2 max-w-[420px] text-sm leading-6 text-ink2">{children}</p> : null}
       </div>
     </DashCard>
@@ -114,8 +114,8 @@ function ListMessage({ children }: { children: ReactNode }) {
 function SideTick({ side, name }: { side: Side; name: string }) {
   return (
     <span className={cn("flex min-w-0 items-center gap-2", side === "B" && "flex-row-reverse")}>
-      <span aria-hidden="true" className="h-3 w-1 flex-shrink-0 -skew-x-12" style={{ backgroundColor: side === "A" ? "var(--h2h-a)" : "var(--h2h-b)" }} />
-      <span className={cn("truncate pr-1 text-[14px] leading-[1.3] tracking-[0.3px] text-ink", raceType)}>{name}</span>
+      <span aria-hidden="true" className="h-3 w-1 flex-shrink-0" style={{ backgroundColor: side === "A" ? "var(--h2h-a)" : "var(--h2h-b)" }} />
+      <span className={cn("truncate pr-1 text-[14px] leading-[1.3] tracking-[0.3px] text-ink", uprightRaceType)}>{name}</span>
     </span>
   );
 }
@@ -219,7 +219,7 @@ function BySeasonTable({ rows, driverA, driverB }: { rows: BySeasonRow[]; driver
           <tbody>
             {rows.map((row) => (
               <tr key={row.season} className="border-b border-[var(--color-line)] last:border-b-0">
-                <th scope="row" className={cn("py-3 pl-1 pr-4 text-left text-[18px] font-normal leading-none tracking-[0.3px] text-ink", raceType)}>
+                <th scope="row" className={cn("py-3 pl-1 pr-4 text-left text-[18px] font-normal leading-none tracking-[0.3px] text-ink", uprightRaceType)}>
                   {row.season}
                 </th>
                 <SeasonCell value={row.raceH2H} />
@@ -258,7 +258,7 @@ function ComparisonPanel({ tab, result }: { tab: ComparisonTab; result: Comparis
     <DashCard>
       <div className="flex flex-col gap-1.5 border-b border-[var(--color-line)] px-5 py-4 sm:px-6 lg:flex-row lg:items-end lg:justify-between lg:gap-6">
         <div className="min-w-0">
-          <h2 className={cn("text-[24px] leading-[1.2] tracking-[0.3px] text-ink", raceType)}>{title}</h2>
+          <h2 className={cn("text-[24px] leading-[1.2] tracking-[0.3px] text-ink", uprightRaceType)}>{title}</h2>
           <p className="mt-0.5 text-[13px] leading-5 text-ink2">{subtitle}</p>
         </div>
         <p className="flex-shrink-0 text-[11px] font-medium uppercase tracking-[0.5px] text-ink2">{(tab === "Overview" ? [appliedFilters[0], type, ...appliedFilters.slice(1)] : appliedFilters).join(" · ")}</p>
@@ -274,7 +274,7 @@ function ComparisonPanel({ tab, result }: { tab: ComparisonTab; result: Comparis
         ) : (
           <div>
             {tab === "Overview" ? (
-              <h3 className={cn("mb-3 px-1.5 text-[18px] leading-[1.2] tracking-[0.3px] text-ink", raceType)}>{type} meetings</h3>
+              <h3 className={cn("mb-3 px-1.5 text-[18px] leading-[1.2] tracking-[0.3px] text-ink", uprightRaceType)}>{type} meetings</h3>
             ) : null}
             <MeetingList
               meetings={meetings}

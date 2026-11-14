@@ -16,7 +16,7 @@ type CountdownPanelProps = {
   isLive: boolean;
 };
 
-function resolveTarget(raceStartUtc: string | undefined, fallbackDate: string) {
+export function resolveTarget(raceStartUtc: string | undefined, fallbackDate: string) {
   if (raceStartUtc) {
     const precise = Date.parse(raceStartUtc);
     if (!Number.isNaN(precise)) {
@@ -30,14 +30,14 @@ function resolveTarget(raceStartUtc: string | undefined, fallbackDate: string) {
 
 const COUNTDOWN_SIZE = "text-[48px] min-[360px]:text-[56px] sm:text-[88px] lg:text-[116px]";
 
-function RollingDigits({ value }: { value: string }) {
+export function RollingDigits({ value, sizeClass = COUNTDOWN_SIZE, className }: { value: string; sizeClass?: string; className?: string }) {
   return (
     <span className="inline-flex">
       {value.split("").map((char, index) => (
         // Fixed-width cells stop the digits shifting sideways as the seconds tick.
         <span
           key={index}
-          className={`relative inline-block h-[1em] w-[0.44em] overflow-hidden text-center font-display leading-none text-[#f8fafc] ${COUNTDOWN_SIZE}`}
+          className={`relative inline-block h-[1em] w-[0.44em] overflow-hidden text-center font-display leading-none text-[#f8fafc] ${sizeClass} ${className ?? ""}`}
         >
           <span key={char} className="block animate-roll-digit">
             {char}
@@ -48,13 +48,16 @@ function RollingDigits({ value }: { value: string }) {
   );
 }
 
-function getTime(target: number | null) {
+export function getTime(target: number | null) {
   if (!target) {
-    return { d: 0, h: 0, m: 0, s: 0 };
+    return { d: 0, h: 0, m: 0, s: 0, elapsed: 0 };
   }
 
-  const diff = Math.max(target - Date.now(), 0);
+  const now = Date.now();
+  const diff = Math.max(target - now, 0);
   return {
+    // Milliseconds since the target passed (0 while counting down).
+    elapsed: Math.max(now - target, 0),
     d: Math.floor(diff / 86400000),
     h: Math.floor((diff % 86400000) / 3600000),
     m: Math.floor((diff % 3600000) / 60000),
@@ -62,11 +65,8 @@ function getTime(target: number | null) {
   };
 }
 
-export function CountdownPanel({ available, round, flagCountry, title, location, date, raceStartUtc, dateRange, isLive }: CountdownPanelProps) {
-  const target = useMemo(
-    () => (available ? resolveTarget(raceStartUtc, date) : null),
-    [available, raceStartUtc, date],
-  );
+/** Ticks once a second towards `target` (ms since epoch). Shared by the homepage hero bar. */
+export function useCountdown(target: number | null) {
   const [time, setTime] = useState(() => getTime(target));
 
   useEffect(() => {
@@ -75,6 +75,16 @@ export function CountdownPanel({ available, round, flagCountry, title, location,
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
   }, [target]);
+
+  return time;
+}
+
+export function CountdownPanel({ available, round, flagCountry, title, location, date, raceStartUtc, dateRange, isLive }: CountdownPanelProps) {
+  const target = useMemo(
+    () => (available ? resolveTarget(raceStartUtc, date) : null),
+    [available, raceStartUtc, date],
+  );
+  const time = useCountdown(target);
 
   return (
     <section className="relative overflow-hidden rounded-t-[14px] bg-[#1d1d1d]">

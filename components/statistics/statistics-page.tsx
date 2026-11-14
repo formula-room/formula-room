@@ -13,7 +13,7 @@ import {
   premiumSelectContentClass,
   premiumSelectTriggerClass,
 } from "@/components/dashboard/page-primitives";
-import { raceType } from "@/components/home/rank-row";
+import { uprightRaceType } from "@/components/home/rank-row";
 import { CategoryIcon } from "@/components/statistics/CategoryIcon";
 import {
   Select,
@@ -54,7 +54,7 @@ function LinkRow({ link, accent }: { link: { label: string; href: string }; acce
       href={link.href}
       className="group flex items-center gap-3 px-5 py-3 transition-colors hover:bg-[var(--color-bg)] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--color-red)]"
     >
-      <span aria-hidden="true" className="h-3 w-[3px] flex-shrink-0 -skew-x-12 rounded-[1px]" style={{ backgroundColor: accent }} />
+      <span aria-hidden="true" className="h-3 w-[3px] flex-shrink-0 rounded-[1px]" style={{ backgroundColor: accent }} />
       <span className="min-w-0 flex-1 text-[13px] font-medium leading-snug text-ink transition-colors group-hover:text-[var(--color-red)]">
         {link.label}
       </span>
@@ -75,16 +75,16 @@ function StatCategoryCard({ category, view }: { category: StatisticsCategory; vi
     <DashCard className="flex flex-col">
       <article>
         <header className="flex items-center gap-3.5 border-b border-[var(--color-line)] px-5 py-4">
-          <span className="race-black flex h-10 w-11 flex-shrink-0 -skew-x-12 items-center justify-center rounded-[4px]">
-            <CategoryIcon categoryId={categoryId} className="h-[18px] w-[18px] skew-x-12" />
+          <span className="race-black flex h-10 w-11 flex-shrink-0 items-center justify-center rounded-[4px]">
+            <CategoryIcon categoryId={categoryId} className="h-[18px] w-[18px]" />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 className={cn("text-[21px] leading-[1.15] tracking-[0.3px] text-ink", raceType)}>{category.title}</h2>
+            <h2 className={cn("text-[21px] leading-[1.15] tracking-[0.3px] text-ink", uprightRaceType)}>{category.title}</h2>
             <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[1px] text-ink3">
               {category.items.length} {category.items.length === 1 ? "link" : "links"}
             </p>
           </div>
-          <span aria-hidden="true" className="h-8 w-1.5 flex-shrink-0 -skew-x-12 rounded-[1px]" style={{ backgroundColor: accent }} />
+          <span aria-hidden="true" className="h-8 w-1.5 flex-shrink-0 rounded-[1px]" style={{ backgroundColor: accent }} />
         </header>
 
         {/* In list view the card's overflow clips the bottom border of the final row. */}
@@ -130,9 +130,9 @@ function ViewButton({
 function EmptyState({ search, onClear }: { search: string; onClear: () => void }) {
   return (
     <div className="col-span-full flex min-h-[220px] flex-col items-center justify-center gap-3 rounded-[12px] border border-dashed border-[var(--color-line2)] bg-[var(--color-bg)] px-6 py-10 text-center">
-      <p className={cn("text-[21px] tracking-[0.3px] text-ink", raceType)}>No results found</p>
+      <p className={cn("text-[21px] tracking-[0.3px] text-ink", uprightRaceType)}>No results found</p>
       <p className="max-w-[320px] text-sm leading-6 text-ink2">
-        No statistics categories match <em>&quot;{search}&quot;</em>. Try a different term.
+        No statistics categories match <em className="not-italic">&quot;{search}&quot;</em>. Try a different term.
       </p>
       <button
         type="button"

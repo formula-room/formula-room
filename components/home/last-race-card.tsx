@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { DashCard } from "@/components/dashboard/page-primitives";
-import { PodiumRow, raceType } from "@/components/home/rank-row";
+import { PodiumRow, uprightRaceType } from "@/components/home/rank-row";
 import { CountryFlag } from "@/components/shared/country-flag";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +27,7 @@ export function LastRaceCard({ title, circuitName, flagCountry, eventHref, podiu
     <DashCard className="home-card flex h-full flex-col">
       <div className="px-4 pb-3 pt-5 sm:px-6">
         <div className="flex items-center justify-between gap-3">
-          <p className={cn("flex items-center gap-2 whitespace-nowrap text-[15px] leading-none tracking-[0.4px] text-ink", raceType)}>
+          <p className={cn("flex items-center gap-2 whitespace-nowrap text-[15px] leading-none tracking-[0.4px] text-ink", uprightRaceType)}>
             {flagCountry ? <CountryFlag country={flagCountry} className="h-[14px] w-[21px] rounded-[2px] border-black/10 shadow-none" /> : null}
             Last Race
           </p>
@@ -39,7 +39,7 @@ export function LastRaceCard({ title, circuitName, flagCountry, eventHref, podiu
             <ArrowRight className="h-3.5 w-3.5 max-[359px]:hidden" aria-hidden="true" />
           </Link>
         </div>
-        <h2 className={cn("mt-2 text-[24px] leading-[1.1] tracking-[0.3px] text-ink sm:text-[28px]", raceType)}>{title}</h2>
+        <h2 className={cn("mt-2 text-[24px] leading-[1.1] tracking-[0.3px] text-ink sm:text-[28px]", uprightRaceType)}>{title}</h2>
         <p className="mt-1.5 text-[12px] font-medium leading-relaxed text-ink2">{circuitName}</p>
       </div>
 

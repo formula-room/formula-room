@@ -222,7 +222,7 @@ export function HeadToHeadPageView() {
           <span aria-hidden="true" className="h-0.5 w-6 bg-[var(--color-red)]" />
           <p className="text-[11px] font-medium uppercase tracking-[2px] text-ink3">Comparison Tool</p>
         </div>
-        <h1 className="font-display text-[56px] italic leading-[0.9] tracking-[1px] text-ink min-[400px]:text-[64px] sm:text-[78px]">
+        <h1 className="font-display text-[56px] leading-[0.9] tracking-[1px] text-ink min-[400px]:text-[64px] sm:text-[78px]">
           Head-to-Head
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-6 text-ink2">

@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { fetchInternalApi } from "@/lib/client/internal-api";
-import { CountdownPanel } from "@/components/home/countdown-panel";
 import { HeroSection } from "@/components/home/hero-section";
 import { LastRaceCard } from "@/components/home/last-race-card";
 import { NewsGrid } from "@/components/home/news-grid";
-import { ScheduleCircuitCard } from "@/components/home/schedule-circuit-card";
 import { ScrollReveal } from "@/components/home/scroll-reveal";
 import { StandingsTabsCard } from "@/components/home/standings-tabs-card";
+import { WeekendSchedule } from "@/components/home/weekend-schedule";
 import type { NewsArticleView } from "@/components/news/NewsSlide";
+import type { HomeHeroBackground } from "@/lib/server/page-data/home-hero";
 
 type HomeSessionItem = {
   position?: string;
@@ -27,6 +27,8 @@ type HomeRaceCardData = {
   location: string;
   circuitId: string;
   circuitName: string;
+  /** IANA time zone of the circuit (used for the event dates in the hero bar). */
+  timeZone?: string;
   eventHref: string | null;
   circuitHref: string | null;
   round: string;
@@ -110,30 +112,15 @@ const emptyState: HomePageData = {
   news: [],
 };
 
-function buildDateRange(sessions: HomeSessionItem[], fallback: string) {
-  const withDates = sessions.filter((session) => session.startsAtUtc);
-  if (withDates.length < 2) {
-    return fallback;
-  }
+type HomePageViewProps = {
+  /** Race-week photograph, chosen on the server so it is part of the first paint. */
+  heroBackground: HomeHeroBackground;
+};
 
-  const first = new Date(withDates[0].startsAtUtc as string);
-  const last = new Date(withDates[withDates.length - 1].startsAtUtc as string);
-  if (Number.isNaN(first.getTime()) || Number.isNaN(last.getTime())) {
-    return fallback;
-  }
-
-  const sameMonth = first.getUTCMonth() === last.getUTCMonth() && first.getUTCFullYear() === last.getUTCFullYear();
-  const dayFormatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", timeZone: "UTC" });
-  const fullFormatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
-
-  return sameMonth
-    ? `${dayFormatter.format(first)} - ${fullFormatter.format(last)}`
-    : `${fullFormatter.format(first)} - ${fullFormatter.format(last)}`;
-}
-
-export function HomePageView() {
+export function HomePageView({ heroBackground }: HomePageViewProps) {
   const [data, setData] = useState<HomePageData>(emptyState);
   const [error, setError] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -144,10 +131,12 @@ export function HomePageView() {
         if (!cancelled) {
           setData(payload);
           setError(null);
+          setLoaded(true);
         }
       } catch (loadError) {
         if (!cancelled) {
           setError(loadError instanceof Error ? loadError.message : "Unable to load home data.");
+          setLoaded(true);
         }
       }
     }
@@ -160,19 +149,11 @@ export function HomePageView() {
   }, []);
 
   const nextRaceAvailable = data.nextRace.round !== "--";
-  const dateRange = useMemo(
-    () => buildDateRange(data.nextRace.sessions, data.nextRace.date),
-    [data.nextRace.sessions, data.nextRace.date],
-  );
-  const isLive = useMemo(() => data.nextRace.sessions.some((session) => session.status === "live"), [data.nextRace.sessions]);
-  const raceSessionStartUtc = useMemo(
-    () => data.nextRace.sessions.find((session) => /^race$/i.test(session.name))?.startsAtUtc,
-    [data.nextRace.sessions],
-  );
+  const raceStatus = !loaded ? "loading" : nextRaceAvailable ? "ready" : "unavailable";
 
   return (
     <div className="home-graphite-scope mx-auto flex w-full max-w-[1140px] flex-col gap-5 px-0 pb-20 lg:gap-6 lg:px-0">
-      <HeroSection />
+      <HeroSection background={heroBackground} race={data.nextRace} status={raceStatus} />
 
       {error && data === emptyState ? (
         <div className="rounded-[14px] border border-[var(--color-red-border)] bg-[var(--color-red-bg)] px-6 py-5 text-[13px] leading-relaxed text-[var(--color-red)]">
@@ -187,29 +168,7 @@ export function HomePageView() {
 
       {error && data === emptyState ? null : (
         <>
-          <ScrollReveal delayMs={240}>
-            <div className="home-card flex flex-col rounded-[14px]">
-              <CountdownPanel
-                available={nextRaceAvailable}
-                round={data.nextRace.round}
-                flagCountry={data.nextRace.flagCountry}
-                title={data.nextRace.title}
-                location={data.nextRace.location}
-                date={data.nextRace.date}
-                raceStartUtc={raceSessionStartUtc}
-                dateRange={dateRange}
-                isLive={isLive}
-              />
-
-              <ScheduleCircuitCard
-                circuitId={data.nextRace.circuitId}
-                circuitName={data.nextRace.circuitName}
-                sessions={data.nextRace.sessions}
-                overview={data.nextRace.overview}
-                eventHref={data.nextRace.eventHref}
-              />
-            </div>
-          </ScrollReveal>
+          <WeekendSchedule sessions={data.nextRace.sessions} eventHref={data.nextRace.eventHref} status={raceStatus} />
 
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
             <ScrollReveal delayMs={240}>
